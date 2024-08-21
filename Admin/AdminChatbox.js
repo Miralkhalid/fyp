@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, TextInput, StyleSheet } from 'react-native';
 import { IconButton } from 'react-native-paper';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const AdminChatbox = () => {
   const [messages, setMessages] = useState([]);
@@ -8,43 +10,78 @@ const AdminChatbox = () => {
   const [messageIdCounter, setMessageIdCounter] = useState(0);
 
   useEffect(() => {
-    // Send initial message when the component mounts
-    const initialMessage = {
-      id: messageIdCounter,
-      text: 'Hello, how can I help you?',
-      timestamp: new Date().toLocaleTimeString(),
-      sender: 'bot', // 'user' or 'bot'
-    };
-    setMessages([initialMessage]);
-    setMessageIdCounter(messageIdCounter + 1);
+    // Fetch initial messages when the component mounts
+    fetchMessages();
   }, []);
 
-  const sendMessage = () => {
-    if (inputText.trim() === '') return;
-
-    const newMessage = {
-      id: messageIdCounter,
-      text: inputText,
-      timestamp: new Date().toLocaleTimeString(),
-      sender: 'user', // 'user' or 'bot'
-    };
-
-    setMessages([...messages, newMessage]);
-    setInputText('');
-    setMessageIdCounter(messageIdCounter + 1);
-
-    // Simulate receiving a message
-    setTimeout(() => {
-      receiveMessage("I'm a bot response!");
-    }, 1000);
+  const fetchMessages = async () => {
+    try {
+      const token = await AsyncStorage.getItem('jwtToken');
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      };
+      const response = await axios.get(`http://192.168.0.106:8000/api/chat/messages/${receiver_id}`, config);
+      setMessages(response.data.messages); // Adjust based on your API response
+      setMessageIdCounter(response.data.messages.length); // Start ID counter from existing messages length
+    } catch (error) {
+      console.error('Error fetching messages:', error);
+    }
   };
+
+  const sendMessage = async () => {
+    if (inputText.trim() === '' || receiverId === null) return;
+  
+    try {
+      const token = await AsyncStorage.getItem('jwtToken');
+      if (!token) {
+        console.error('No JWT token found');
+        return;
+      }
+  
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+  
+      const messagePayload = {
+        receiver_id: receiverId, // Receiver ID from the selected student
+        message: inputText,
+      };
+  
+      // Send the message to the server
+      await axios.post('http://192.168.0.106:8000/api/chat/send', messagePayload, config);
+  
+      const newMessage = {
+        id: messageIdCounter,
+        text: inputText,
+        timestamp: new Date().toLocaleTimeString(),
+        sender: 'user',
+      };
+  
+      setMessages([...messages, newMessage]);
+      setInputText('');
+      setMessageIdCounter(messageIdCounter + 1);
+  
+      // Simulate receiving a message
+      setTimeout(() => {
+        receiveMessage("I'm a bot response!");
+      }, 1000);
+    } catch (error) {
+      console.error('Error sending message:', error.response ? error.response.data : error.message);
+    }
+  };
+  
+
 
   const receiveMessage = (text) => {
     const newMessage = {
       id: messageIdCounter,
       text,
       timestamp: new Date().toLocaleTimeString(),
-      sender: 'bot', // 'user' or 'bot'
+      sender: 'bot'
     };
 
     setMessages((prevMessages) => [...prevMessages, newMessage]);
@@ -87,7 +124,7 @@ const styles = StyleSheet.create({
   messagesContainer: {
     padding: 10,
     backgroundColor: '#3b3b66',
-    padding: '100%',
+    paddingBottom: 80, // Ensure space for input container
   },
   message: {
     padding: 10,
@@ -115,6 +152,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: 5,
+    borderTopWidth: 1,
+    borderTopColor: '#ddd',
+    backgroundColor: '#fff',
   },
   input: {
     flex: 1,

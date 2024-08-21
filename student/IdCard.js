@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Alert, ImageBackground } from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const IdCard = () => {
+const Idcard = () => {
   const [studentCard, setStudentCard] = useState('');
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -12,28 +12,23 @@ const IdCard = () => {
     const fetchCard = async () => {
       try {
         // Retrieve student_id from AsyncStorage
-        const id = await AsyncStorage.getItem('student_card', $student_id);
-        
-        // Log the retrieved student_id
-        console.log(`Retrieved student ID: ${student_id}`);
-        
-        // Check if student_id is null or undefined
-        // if (!id) {
-        //   Alert.alert('Error', 'Student ID not found');
-        //   setLoading(false);
-        //   return;
-        // }
+        const id = await AsyncStorage.getItem('student_card', 'studentId');
+        setId(studentId); // Set the user ID
 
+        // Log the retrieved student_id
+        console.log(`Retrieved student ID: ${id}`);
+        
         // Fetch card details from API
-        console.log(`Fetching card details for student ID: ${student_id}`);
-        const response = await axios.get(`http://192.168.0.106:8000/api/student/get-card-detail/${student_id}`);
+        console.log(`Fetching card details for student ID: ${id}`);
+        const response = await axios.get(`http://192.168.0.106:8000/api/student/get-card-detail/${id}`);
         
         // Log the API response
         console.log('API Response Data:', response);
         
         // Check if response contains data
         if (response.data.status === 200 && response && response.data.data) {
-          setStudentCard(response); // Set student card data
+          console.log(response.data.data);
+          setStudentCard(response.data.data); // Set student card data
         } else {
           Alert.alert('Error', 'Failed to fetch card details');
           console.log('Failed to fetch card details. Response:', response);
@@ -120,4 +115,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default IdCard;
+export default Idcard;

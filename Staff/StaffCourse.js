@@ -34,17 +34,17 @@ const StaffCourse = ({navigation}) => {
                 },
             });
 
-            if (response.data.data.courses) {
-                console.log(response.data.data.courses);
-                setCourse(response.data.data.courses);
-                setFilteredCourse(response.data.data);
-            } else {
-                throw new Error('Unexpected response format');
+                if (response.data.data.courses) {
+                    console.log(response.data.data.courses);
+                    setCourse(response.data.data.courses);
+                    setFilteredCourse(response.data.data);
+                } else {
+                    throw new Error('Unexpected response format');
+                }
+            } catch (error) {
+                console.error('Error fetching courses:', error);
+                setError(error.message);
             }
-        } catch (error) {
-            console.error('Error fetching courses:', error);
-            setError(error.message);
-        }
     };
     const filterCourse = () => {
         const lowercasedFilter = searchQuery.toLowerCase();

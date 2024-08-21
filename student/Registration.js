@@ -33,6 +33,7 @@ const Registration = () => {
         try {
             const token = await AsyncStorage.getItem('jwtToken');
             const response = await axios.post(`http://192.168.0.106:8000/api/course-registeration/${item.id}/register`, {
+            // const response = await axios.post(`http://192.168.188.191:8000/api/course-registeration/${item.id}/register`, {
                 course_id: item.id,
             }, {
                 headers: {

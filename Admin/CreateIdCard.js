@@ -4,6 +4,7 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const CreateIdCard = () => {
+  const [id, setDateOfBirth] = useState('');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone_no, setPhoneNo] = useState('');
@@ -19,7 +20,7 @@ const CreateIdCard = () => {
     try {
       console.log({ name, email, phone_no, address, student_id });
       const response = await axios.post('http://192.168.0.106:8000/api/student/card-create', {
-        // id,
+        id,
         name,
         email,
         phone_no,
@@ -111,6 +112,7 @@ const styles = StyleSheet.create({
     marginHorizontal: '10%',
     marginTop: 10,
     borderRadius: 10,
+    color:'black',
     paddingHorizontal: 10,
   },
   button: {

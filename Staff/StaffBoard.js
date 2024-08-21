@@ -14,13 +14,6 @@ const Header = () => {
     return (
       <View style={styles.Boxcontainer}>
         <Text style={styles.caption}>Welcome to the LSIT!</Text>
-        <View style={styles.box}>
-          <View style={styles.inner}>
-            <TouchableOpacity onPress={() => navigation.navigate('AddLibrary')}>
-                <Text style={styles.button}>classes</Text>
-            </TouchableOpacity>
-          </View>  
-        </View>
 
         <View style={styles.box}>
           <View style={styles.inner}>
@@ -71,13 +64,14 @@ const styles = StyleSheet.create({
       height:'50%',
       width:'100%',
       flexDirection:'row',
+      justifyContent:'center',
       flexWrap:'wrap',
       padding:15,
     },
     box:{
        //backgroundColor:'yellow',
         height:'50%',
-        width:'50%',
+        width:'60%',
         padding:5,
         marginTop:2,
     },
@@ -89,7 +83,6 @@ const styles = StyleSheet.create({
     caption:{
         color:'#3b3b66',
         fontSize:16,
-        marginLeft:'25%',
         padding:5,
         fontWeight:'500',
     },

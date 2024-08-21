@@ -45,6 +45,14 @@ const Header = () => {
             </TouchableOpacity>
           </View>  
         </View>
+
+        <View style={styles.box}>
+          <View style={styles.inner}>
+          <TouchableOpacity onPress={()=> navigation.navigate('Library')}>
+                <Text style={styles.button}>Library</Text>
+            </TouchableOpacity>
+          </View>  
+        </View>
       
       </View>
 

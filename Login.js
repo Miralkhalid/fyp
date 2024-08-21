@@ -2,14 +2,13 @@ import React, { useState } from 'react';
 import { Alert, View, TextInput, ImageBackground, ScrollView, TouchableOpacity, Text, StyleSheet, ActivityIndicator, Modal } from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Checkbox } from 'react-native-paper';
+import {RadioButton} from 'react-native-paper';
 
 const Login = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [checked, setChecked] = useState(false);
-
+  const [checked, setChecked] = React.useState(false);
   const [loading, setLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false); 
   const [successModalVisible, setSuccessModalVisible] = useState(false);
@@ -36,13 +35,18 @@ const Login = ({ navigation }) => {
         if(response.data.data['user-detail'].role === 'student')
         {
           const studentId = response.data.data['user-detail'].id;
+          const studentEmail = response.data.data['user-detail'].email;
           await AsyncStorage.setItem('studentId', JSON.stringify(studentId));
           setSuccessModalVisible(true); // Show success modal
           setTimeout(() => {
             setSuccessModalVisible(false); // Hide success modal after 2 seconds
+            setEmail(''); // Clear email field
+            setPassword(''); // Clear password field
+            setChecked('');
             if (checked) {
                           navigation.navigate('AlumniDB'); // Navigate to AlumniDB screen if checkbox is checked
-                        } else {
+                        }
+            else {
                           navigation.navigate('Dashboard');
                         }
             // navigation.navigate('Dashboard');
@@ -90,12 +94,11 @@ const Login = ({ navigation }) => {
             </TouchableOpacity>
             <View style={styles.checkboxContainer}>
               <Text style={styles.checkboxtext}>Login as Alumni</Text>
-              <Checkbox
-                status={checked ? 'checked' : 'unchecked'}
-                onPress={() => setChecked(!checked)}
-                color="#8c8c9f" // Optional: Change the color of the checkbox
-                style={styles.checbox}
-              />
+               <RadioButton
+               value="first"
+               status={ checked === 'first' ? 'checked' : 'unchecked' }
+               onPress={() => setChecked('first')}
+             />
             </View>
             <TouchableOpacity style={styles.button} onPress={handleLogin}>
               <Text style={styles.buttonText}>Login</Text>

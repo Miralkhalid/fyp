@@ -21,6 +21,7 @@ const Admin = ({ navigation }) => {
       }
       console.log(email, password );
       const response = await axios.post('http://192.168.0.106:8000/api/login',{
+        // const response = await axios.post('http://192.168.188.191:8000/api/login',{
         email: email,
         password: password,
         role: 'admin'

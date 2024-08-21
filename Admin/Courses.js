@@ -19,7 +19,7 @@ const Courses = ({navigation}) => {
                 credit_hour,
                 
             });
-            const response = await axios.post('http://192.168.0.104:8000/api/course/create', {
+            const response = await axios.post('http://192.168.0.106:8000/api/course/create', {
                 code: code,
                 name:  name,
                 department: department,

@@ -1,28 +1,34 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, FlatList, Alert, RadioButton } from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-// import { Picker } from '@react-native-picker/picker';
+import { Picker } from '@react-native-picker/picker';
 
 const StudentAttendance = () => {
   const [courseId, setCourseId] = useState('');
   const [courses, setCourses] = useState([]);
-  const [studentId, setStudentId] = useState('');
+  const [students, setStudents] = useState([]);
+  const [selectedStudents, setSelectedStudents] = useState([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    // Fetch courses when the component mounts
-    const fetchCourses = async () => {
+    const fetchStudents = async () => {
       try {
         const response = await axios.get('http://192.168.0.106:8000/api/staff/assign-courses'); // Adjust the API endpoint as needed
-        setCourses(response.data.courses);
+        setStudents(response.data.students); // Adjust based on the actual response structure
+        // Initialize selected students with empty values
+        setSelectedStudents(response.data.students.map(student => ({
+          id: student.id,
+          name: student.name,
+          attended: false
+        })));
       } catch (error) {
-        console.error('Failed to fetch courses:', error);
-        Alert.alert('Error', 'Failed to load courses');
+        console.error('Failed to fetch students:', error);
+        Alert.alert('Error', 'Failed to load students');
       }
     };
 
-    fetchCourses();
+    fetchStudents();
   }, []);
 
   const handleMarkAttendance = async () => {
@@ -30,9 +36,12 @@ const StudentAttendance = () => {
     try {
       const token = await AsyncStorage.getItem('jwtToken');
 
+      // Filter students who have been marked as attended
+      const attendedStudents = selectedStudents.filter(student => student.attended);
+
       const response = await axios.post('http://192.168.0.106:8000/api/mark-attendance', {
         course_id: courseId,
-        student_id: studentId,
+        students: attendedStudents,
       }, {
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -52,6 +61,27 @@ const StudentAttendance = () => {
     }
   };
 
+  const handleSelectStudent = (studentId) => {
+    setSelectedStudents(prevState =>
+      prevState.map(student =>
+        student.id === studentId
+          ? { ...student, attended: !student.attended }
+          : student
+      )
+    );
+  };
+
+  const renderStudent = ({ item }) => (
+    <View style={styles.row}>
+      <Text style={styles.cell}>Student Name{item.name}</Text>
+      <RadioButton
+        value={item.id}
+        status={item.attended ? 'checked' : 'unchecked'}
+        onPress={() => handleSelectStudent(item.id)}
+      />
+    </View>
+  );
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Mark Attendance</Text>
@@ -67,13 +97,11 @@ const StudentAttendance = () => {
         ))}
       </Picker>
 
-      <Text style={styles.label}>Student ID:</Text>
-      <TextInput
-        style={styles.input}
-        value={studentId}
-        onChangeText={setStudentId}
-        keyboardType="numeric"
-        placeholder="Enter your student ID"
+      <Text style={styles.label}>Students:</Text>
+      <FlatList
+        data={students}
+        renderItem={renderStudent}
+        keyExtractor={item => item.id.toString()}
       />
 
       <TouchableOpacity
@@ -81,7 +109,7 @@ const StudentAttendance = () => {
         onPress={handleMarkAttendance}
         disabled={loading}
       >
-        <Text style={styles.buttonText}>{loading ? 'Submitting...' : 'Mark Attendance'}</Text>
+        <Text style={styles.buttonText}>{loading ? 'Submitting...' : 'Submit Attendance'}</Text>
       </TouchableOpacity>
     </View>
   );
@@ -98,29 +126,37 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 20,
     textAlign: 'center',
+    color:'#3b3b66',
   },
   label: {
     fontSize: 18,
     marginVertical: 10,
+    color:'#3b3b66',
+
   },
   picker: {
     height: 50,
     width: '100%',
     marginBottom: 20,
   },
-  input: {
-    height: 40,
-    borderColor: '#ccc',
-    borderWidth: 1,
-    borderRadius: 5,
-    paddingHorizontal: 10,
-    marginBottom: 20,
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
+  },
+  cell: {
+    flex: 1,
+    fontSize: 16,
+    color:'#3b3b66',
   },
   button: {
     backgroundColor: '#3b3b66',
     padding: 15,
     borderRadius: 5,
     alignItems: 'center',
+    marginTop: 20,
   },
   buttonText: {
     color: '#fff',

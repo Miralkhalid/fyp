@@ -6,14 +6,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const API_URL = 'http://192.168.0.106:8000/api';
 
 const AddLibrary = ({navigation}) => {
-  const [email, setEmail] = useState('');
-  const [name, setName] = useState('');
-  const [password, setPassword] = useState('');
-  const [status, setStatus] = useState(true);
-  const [dateOfBirth, setDateOfBirth] = useState('');
+  const [book_name, setBookName] = useState('');
+  const [author_name, setAuthorName] = useState('');
+  const [published_year, setPublishesYear] = useState('');
 
-  const handleAddStudent = async () => {
-    if (!email || !name || !password || !dateOfBirth) {
+  const handleAddBook = async () => {
+    if (!book_name || !author_name || !published_year) {
       Alert.alert('Error', 'All fields are required');
       return;
     }
@@ -24,19 +22,17 @@ const AddLibrary = ({navigation}) => {
           Authorization: `Bearer ${token}`
         }
       };
-      const response = await axios.post(`${API_URL}/admin/staff/create`, {
-        email,
-        name,
-        password,
-        status,
-        date_of_birth: dateOfBirth,
+      const response = await axios.post(`${API_URL}/book/store`, {
+        book_name,
+        author_name,
+        published_year,
       }, config);
       if (response.data) {
-        Alert.alert('Success', 'Student added successfully');
+        Alert.alert('Success', 'Book added successfully');
         resetForm();
       }
     } catch (error) {
-      console.error('Error adding student', error);
+      console.error('Error adding book', error);
       if (error.response) {
         const errors = error.response.data.errors;
         if (errors && Object.keys(errors).length > 0) {
@@ -52,10 +48,9 @@ const AddLibrary = ({navigation}) => {
   }
 
   const resetForm = () => {
-    setEmail('');
-    setName('');
-    setPassword('');
-    setDateOfBirth('');
+    setBookName('');
+    setAuthorName('');
+    setPublishesYear('');
   };
 
   return (
@@ -68,30 +63,29 @@ const AddLibrary = ({navigation}) => {
       <TextInput
         placeholder="Book Name"
         placeholderTextColor={'#cdcddb'}
-        value={email}
-        onChangeText={setEmail}
+        value={book_name}
+        onChangeText={setBookName}
         style={styles.input}
       />
       <TextInput
         placeholder="Author Name"
         placeholderTextColor={'#cdcddb'}
-        value={name}
-        onChangeText={setName}
+        value={author_name}
+        onChangeText={setAuthorName}
         style={styles.input}
       />
       <TextInput
         placeholder="Publishes Year"
         placeholderTextColor={'#cdcddb'}
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry={true}
+        value={published_year}
+        onChangeText={setPublishesYear}
         style={styles.input}
       />
-        <TouchableOpacity style={styles.button} onPress={handleAddStudent} >
+        <TouchableOpacity style={styles.button} onPress={handleAddBook} >
           <Text style={styles.buttonText}>Add Book</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.UpdateBtn} onPress={() => navigation.navigate('UpdateStaff')} >
+        <TouchableOpacity style={styles.UpdateBtn} onPress={() => navigation.navigate('BookList')} >
           <Text style={styles.buttonText}>Book List</Text>
         </TouchableOpacity>
         </View>
@@ -132,6 +126,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     paddingHorizontal: 8,
     width:'80%',
+    color:'#3b3b66',
     alignSelf:'center',
   },
   button: {

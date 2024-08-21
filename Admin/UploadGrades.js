@@ -31,7 +31,7 @@ const UploadGrades = ({ pdfUri, onFileUploaded }) => {
       setUploading(true); // Set uploading state to true
 
       // Upload file
-      const response = await axios.post('http://192.168.0.106:8000/api/upload/fees', formData, {
+      const response = await axios.post('http://192.168.0.106:8000/api/upload/grades', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${token}`,

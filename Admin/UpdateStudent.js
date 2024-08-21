@@ -1,5 +1,5 @@
 import React, { useLayoutEffect, useState } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity,Image, ScrollView } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity,Image, ScrollView,Alert } from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import StudentRecord from './StudentRecord';
@@ -49,36 +49,40 @@ useLayoutEffect( () => {
       const updatedData = {
         email: newEmail,
         name: newName,
-        status: newStatus,
+        status: newStatus === '1', // Convert status to boolean if needed
         password: newPassword,
-        studentid: newStudentId,
+        student_id: newStudentId, // Corrected key to match backend
         date_of_birth: newDateOfBirth,
       };
-
-      const response = await axios.post(`http://10.0.2.2:8000/api/admin/student/update/${id}`, updatedData, {
+  
+      const url = `http://10.0.2.2:8000/api/admin/student/update/${id}`;
+      console.log(`URL: ${url}`);
+      console.log('Updated Data:', updatedData);
+  
+      const response = await axios.post(url, updatedData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-
+  
       if (response.status === 200) {
-        console.log('updatecall');
-        navigation.navigate(StudentRecord); // Navigate back to the previous screen
-
+        console.log('Student updated successfully');
+        Alert.alert('update Student');
+        navigation.navigate('StudentRecord'); // Corrected navigation
       } else {
         setErrors({ general: 'Failed to update student' });
       }
     } catch (error) {
-      console.error('Error updating student:', error);
-      if (error.response && error.response.status === 422) {
-        const errorMessages = error.response.data.errors;
-        setErrors(errorMessages);
+      console.error('Error updating student:', error.message);
+      if (error.response) {
+        console.error('Error details:', error.response.data);
+        setErrors({ general: error.response.data.message || 'Failed to update student' });
       } else {
         setErrors({ general: 'Failed to update student' });
       }
     }
   };
-
+  
   return (
     <View style={styles.container}>
         <ScrollView>

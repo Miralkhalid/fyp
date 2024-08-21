@@ -22,7 +22,7 @@ import Courses from './Admin/Courses';
 import CourseList from './Admin/CourseList';
 import AcademicService from './Admin/AcademicService';
 import Studentservices from './Admin/Studentservices';
-import StudentInfo from './Admin/STudentInfo';
+import StudentInfo from './Admin/StudentInfo';
 import AdminProfile from './Admin/AdminProfile';
 import StudentRecord from './Admin/StudentRecord';
 import UpdateStudent from './Admin/UpdateStudent';
@@ -50,6 +50,10 @@ import AlumniProfile from './Alumni/AlumniProfile';
 import AlumniChatbox from './Alumni/AlumniChatbox';
 import StaffCourse from './Staff/StaffCourse';
 import StudentAttendance from './Staff/StudentAttendance';
+import BookList from './Admin/BookList';
+import StudentPDFViewer from './student/StudentPDFViewer';
+import library from './student/Library';
+import Library from './student/Library';
 
   const Stack = createNativeStackNavigator();
 
@@ -105,6 +109,9 @@ const App = () => {
     <Stack.Screen name="AlumniChatbox" component={AlumniChatbox}></Stack.Screen>
     <Stack.Screen name="StaffCourse" component={StaffCourse}></Stack.Screen>
     <Stack.Screen name="StudentAttendance" component={StudentAttendance}></Stack.Screen>
+    <Stack.Screen name="BookList" component={BookList}></Stack.Screen>
+   <Stack.Screen name="StudentPDFViewer" component={StudentPDFViewer}></Stack.Screen>
+   <Stack.Screen name="Library" component={Library}></Stack.Screen>
     </Stack.Navigator>
     </NavigationContainer>
   )
