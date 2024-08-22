@@ -16,7 +16,7 @@ import React, { useState } from 'react';
         Alert.alert('Error', 'All fields are required');
         return;
       }
-      
+
       // Additional frontend validation for student ID format
       const studentIdPattern = /^[A-Za-z0-9-]+$/; // Adjust this regex to match the expected format
       if (!studentIdPattern.test(student_id)) {
@@ -32,7 +32,8 @@ import React, { useState } from 'react';
             Authorization: `Bearer ${token}` // Corrected the syntax here
           }
         };
-        const response = await axios.post(`http://192.168.0.106:8000/api/admin/student/create`, {
+//        const response = await axios.post(`http://192.168.0.106:8000/api/admin/student/create`, {
+         const response = await axios.post(`http://192.168.195.191:8000/api/admin/student/create`, {
           email,
           name,
           password,
