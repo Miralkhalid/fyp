@@ -61,7 +61,7 @@ import Approval from './Admin/Approval';
 const App = () => {
   return (
     <NavigationContainer>
-    <Stack.Navigator initialRouteName="LSIT" screenOptions={{headerShown:false}}>
+    <Stack.Navigator initialRouteName="LSIT" >
     <Stack.Screen name="LSIT" component={LSIT}></Stack.Screen>
     <Stack.Screen name="Login" component={Login}></Stack.Screen>
     <Stack.Screen name="Dashboard" component={Dashboard}></Stack.Screen>
