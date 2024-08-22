@@ -3,7 +3,7 @@ import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native
 import axios from 'axios';
 import { Searchbar } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+const API_URL = 'http://192.168.0.106:8000/api';
 const BookList = () => {
     const [book, setBook] = useState([]);
     const [error, setError] = useState(null);
@@ -24,7 +24,8 @@ const BookList = () => {
                 }
             };
             // Sending GET request without parameters
-            const response = await axios.get('http://192.168.0.106:8000/api/book/get', config);
+//            const response = await axios.get('http://192.168.0.106:8000/api/book/get', config);
+             const response = await axios.get(`${API_URL}/api/book/get`, config);
 
             if (response.data && response.data.data && response.data.data.book) {
                 console.log(response.data.data.book);
@@ -40,7 +41,8 @@ const BookList = () => {
     const handleDelete = async () => {
         try {
           const token = await AsyncStorage.getItem('jwtToken');
-          const response = await axios.delete(`http://192.168.0.106:8000/api/book/delete`, {
+//          const response = await axios.delete(`http://192.168.0.106:8000/api/book/delete`, {
+           const response = await axios.delete(`${API_URL}/api/book/delete`, {
             headers: {
               Authorization: `Bearer ${token}`,
             },
@@ -64,7 +66,7 @@ const BookList = () => {
         });
         setFilteredBook(filteredBook);
     };
-      
+
     useEffect(() => {
         filterBook();
     }, [searchQuery, book]);

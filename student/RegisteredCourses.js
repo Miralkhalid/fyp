@@ -1,35 +1,53 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, StyleSheet } from 'react-native';
 import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { ip } from './global';
 
 const RegisteredCourses = () => {
-    const [course, setCourse] = useState([]);
+    const [courses, setCourses] = useState([]);
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        handleCourse();
+        fetchApprovedCourses();
     }, []);
 
-    const handleCourse = async () => {
+    const fetchApprovedCourses = async () => {
         try {
-            const response = await axios.get('http://192.168.0.106:8000/api/course-registeration/courses/2/approved');
-           if (response.data ) {
-                console.log(response.data);
-                setCourse(response.data);
+            const student_id = await AsyncStorage.getItem('studentId');
+            console.log(student_id);
+            const token = await AsyncStorage.getItem('jwtToken');
+             const url = `${ip}/api/course-registeration/courses/${student_id}/approved`;
+
+            console.log('Fetching URL:', url); // Debug URL
+
+            const response = await axios.get(url, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+
+            if (response.data) {
+                setCourses(response.data);
+            console.log('Response Data:', response.data); // Debug response data
+
+            } else {
+                setError('No data available');
             }
         } catch (error) {
-            console.error('Error fetching Course:', error);
-            setError(error.message);
+            console.error('Error fetching courses:', error);
+            setError('Failed to fetch courses');
         }
     };
 
     const renderItem = ({ item }) => (
-        <View style={styles.studentItem}>
-            <Text style={styles.style}><Text style={{fontWeight:'700', color:'#cdcddb'}}>Course code: </Text>{item.code}</Text>
-            <Text style={styles.style}><Text style={{fontWeight:'700', color:'#cdcddb'}}>Course Name: </Text>{item.name}</Text>
-            <Text style={styles.style}><Text style={{fontWeight:'700', color:'#cdcddb'}} >Department: </Text>{item.department}</Text>
-            <Text style={styles.style}><Text style={{fontWeight:'700', color:'#cdcddb'}}>Semester: </Text>{item.semester}</Text>
-            <Text style={styles.style}><Text style={{fontWeight:'700', color:'#cdcddb'}}>Credit_hour: </Text>{item.credit_hour}</Text>
+        <View style={styles.courseItem}>
+            <Text style={styles.text}><Text style={{fontWeight:'500', color:'white'}}>Course Code: </Text>{item.course?.code || 'N/A'}</Text>
+            <Text style={styles.text}><Text style={{fontWeight:'500', color:'white'}}>Course Name: </Text>{item.course?.name || 'N/A'}</Text>
+            <Text style={styles.text}><Text style={{fontWeight:'500', color:'white'}}>Department: </Text>{item.course?.department || 'N/A'}</Text>
+            <Text style={styles.text}><Text style={{fontWeight:'500', color:'white'}}>Semester: </Text>{item.course?.semester || 'N/A'}</Text>
+            <Text style={styles.text}><Text style={{fontWeight:'500', color:'white'}}>Credit Hour: </Text>{item.course?.credit_hour || 'N/A'}</Text>
+            <Text style={styles.text}><Text style={{fontWeight:'500', color:'white'}}>Approval Status: </Text>{item.is_approved ? 'Approved' : 'Pending'}</Text>
         </View>
     );
 
@@ -39,12 +57,11 @@ const RegisteredCourses = () => {
                 <Text style={styles.error}>Error: {error}</Text>
             ) : (
                 <FlatList
-                    data={course}
+                    data={courses}
                     renderItem={renderItem}
                     keyExtractor={(item) => item.id.toString()}
                 />
             )}
-
         </View>
     );
 };
@@ -55,7 +72,7 @@ const styles = StyleSheet.create({
         padding: 10,
         backgroundColor: '#fff',
     },
-    studentItem: {
+    courseItem: {
         padding: 12,
         marginVertical: 8,
         backgroundColor: '#3b3b66',
@@ -63,26 +80,19 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: 'black',
     },
-    style: {
-        fontSize: 16,
-        color:'#cdcddb',
-        marginBottom: 4,
-        fontWeight:'400',
-    },
-    email: {
-        fontSize: 16,
-        marginBottom: 4,
-    },
-    department: {
+    text: {
         fontSize: 14,
-        color: '#555',
+        color: 'white',
         marginBottom: 4,
+    },
+    label: {
+        fontWeight: '700',
+        color: '#cdcddb',
     },
     error: {
         fontSize: 18,
         color: 'red',
         textAlign: 'center',
-      //  marginTop: 20,
     },
 });
 

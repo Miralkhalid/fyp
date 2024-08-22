@@ -3,7 +3,8 @@ import { View, TextInput, Image, Alert, StyleSheet, Text, ScrollView, TouchableO
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const API_URL = 'http://192.168.0.106:8000/api';
+//const API_URL = 'http://192.168.0.106:8000/api';
+ const API_URL = 'http://192.168.195.191:8000/api';
 
 const StaffInfo = ({navigation}) => {
   const [email, setEmail] = useState('');
@@ -32,7 +33,7 @@ const StaffInfo = ({navigation}) => {
         date_of_birth: dateOfBirth,
       }, config);
       if (response.data) {
-        Alert.alert('Success', 'Student added successfully');
+        Alert.alert('Success', 'Staff added successfully');
         resetForm();
       }
     } catch (error) {
@@ -112,7 +113,7 @@ const styles = StyleSheet.create({
     // flex: 1,
     padding: 16,
     backgroundColor: '#fff',
-    //  height:'150%',
+     height:'150%',
     // flexDirection:'column',
   },
   title: {
@@ -135,6 +136,7 @@ const styles = StyleSheet.create({
     borderRightWidth:1,
     borderBottomWidth:2,
     borderColor: '#3b3b66',
+    color:'#3b3b66',
     borderRadius:10,
     marginBottom: 12,
     paddingHorizontal: 8,

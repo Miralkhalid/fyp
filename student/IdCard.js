@@ -1,37 +1,42 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Alert, ImageBackground } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, ActivityIndicator, Alert, StyleSheet,ImageBackground } from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const Idcard = () => {
-  const [studentCard, setStudentCard] = useState('');
-  const [error, setError] = useState(null);
+const IdCard = () => {
   const [loading, setLoading] = useState(true);
+  const [studentCard, setStudentCard] = useState(null);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchCard = async () => {
       try {
-        // Retrieve student_id from AsyncStorage
-        const id = await AsyncStorage.getItem('student_card', 'studentId');
-        setId(studentId); // Set the user ID
+        const student_id = await AsyncStorage.getItem('student_id');
+        const token = await AsyncStorage.getItem('jwtToken');
 
-        // Log the retrieved student_id
-        console.log(`Retrieved student ID: ${id}`);
-        
-        // Fetch card details from API
-        console.log(`Fetching card details for student ID: ${id}`);
-        const response = await axios.get(`http://192.168.0.106:8000/api/student/get-card-detail/${id}`);
-        
-        // Log the API response
-        console.log('API Response Data:', response);
-        
-        // Check if response contains data
-        if (response.data.status === 200 && response && response.data.data) {
-          console.log(response.data.data);
-          setStudentCard(response.data.data); // Set student card data
+        // Log the retrieved student ID and token
+        console.log(`Retrieved student ID: ${student_id}`);
+        console.log(`Retrieved JWT Token: ${token}`);
+
+        if (!student_id) {
+          Alert.alert('Error', 'Student ID not found in storage');
+          setLoading(false);
+          return;
+        }
+
+        const config = {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        };
+
+        console.log(`Fetching card details for student ID: ${student_id}`);
+        const response = await axios.get(`http://192.168.0.106:8000/api/student/get-card-detail/${student_id}`, config);
+
+        if (response.status === 200 && response.data.data) {
+          setStudentCard(response.data.data);
         } else {
-          Alert.alert('Error', 'Failed to fetch card details');
-          console.log('Failed to fetch card details. Response:', response);
+          Alert.alert('Error', response.data.message || 'Failed to fetch card details');
         }
       } catch (error) {
         console.error('Error fetching details:', error);
@@ -45,32 +50,28 @@ const Idcard = () => {
   }, []);
 
   if (loading) {
-    return (
-      <View style={styles.container}>
-        <Text>Loading...</Text>
-      </View>
-    );
+    return <ActivityIndicator size="large" color="#0000ff" />;
   }
 
-  console.log('Student Card Data:', studentCard); // Log student card data
+  if (error) {
+    return <Text style={styles.errorText}>Error: {error}</Text>;
+  }
+
+  if (!studentCard) {
+    return <Text style={styles.errorText}>No card data found</Text>;
+  }
 
   return (
     <View style={styles.container}>
-      <ImageBackground source={require('./idcard.png')} style={styles.backgroundImage}>
-        <Text style={styles.caption}>LAHORE SCHOOL OF INNOVATION & TECHNOLOGY</Text>
-        {error ? (
-          <Text style={styles.error}>Error: {error}</Text>
-        ) : studentCard ? (
-          <View style={styles.cardItem}>
-            <Text style={styles.style}><Text style={styles.label}>Name: </Text>{studentCard.name}</Text>
-            <Text style={styles.style}><Text style={styles.label}>Email: </Text>{studentCard.email}</Text>
-            <Text style={styles.style}><Text style={styles.label}>Phone No: </Text>{studentCard.phone_no}</Text>
-            <Text style={styles.style}><Text style={styles.label}>Address: </Text>{studentCard.address}</Text>
-            <Text style={styles.style}><Text style={styles.label}>Create Date: </Text>{studentCard.create_date}</Text>
-          </View>
-        ) : (
-          <Text style={styles.empty}>No data available</Text>
-        )}
+    <ImageBackground source={require('./idcard.png')} style={{height:'100%'}}>
+    <View style={styles.detail}>
+      <Text style={styles.cardText}>Name: {studentCard.name}</Text>
+      <Text style={styles.cardText}>Email: {studentCard.email}</Text>
+      <Text style={styles.cardText}>Phone Number: {studentCard.phone_no}</Text>
+      <Text style={styles.cardText}>Address: {studentCard.address}</Text>
+      <Text style={styles.cardText}>Student ID: {studentCard.student_id}</Text>
+      <Text style={styles.cardText}>Created At: {studentCard.create_date}</Text>
+      </View>
       </ImageBackground>
     </View>
   );
@@ -79,40 +80,24 @@ const Idcard = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
-    backgroundColor: '#fff',
+//    justifyContent: 'center',
+//    alignItems: 'center',
+//    padding: 20,
   },
-  backgroundImage: {
-    height: '100%',
-    width: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
+  cardText: {
+    fontSize: 14,
+    marginVertical: 5,
+    color:'#cdcddb',
   },
-  caption: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginBottom: 20,
+  detail:{
+  marginHorizontal:'20%',
+  marginVertical:'50%'
   },
-  cardItem: {
-    padding: 20,
-  },
-  style: {
-    fontSize: 16,
-    marginBottom: 10,
-  },
-  label: {
-    fontWeight: '700',
-    color: '#cdcddb',
-  },
-  error: {
+  errorText: {
     color: 'red',
     textAlign: 'center',
-  },
-  empty: {
-    textAlign: 'center',
-    color: '#888',
+    fontSize: 16,
   },
 });
 
-export default Idcard;
+export default IdCard;

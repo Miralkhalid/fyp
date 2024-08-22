@@ -13,7 +13,8 @@ const StudentPDFViewer = ({ fileName }) => {
     const fetchPdfUri = async () => {
       try {
         const token = await AsyncStorage.getItem('jwtToken');
-        const response = await axios.get('http://192.168.0.106:8000/api/upload/fetch-fees/grades', {
+//        const response = await axios.get('http://192.168.0.106:8000/api/upload/fetch-fees/grades', {
+         const response = await axios.get('http://192.168.0.106:8000/api/upload/fetch-fees/grades', {
           headers: {
             Authorization: `Bearer ${token}`,
           },

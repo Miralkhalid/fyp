@@ -3,6 +3,7 @@ import { View, Text, FlatList, TextInput, StyleSheet } from 'react-native';
 import { IconButton } from 'react-native-paper';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { ip } from './global';
 
 const Chatbox = () => {
   const [messages, setMessages] = useState([]);
@@ -22,7 +23,8 @@ const Chatbox = () => {
           Authorization: `Bearer ${token}`
         }
       };
-      const response = await axios.get('http://192.168.0.106:8000/api/chat/messages', config);
+//      const response = await axios.get('http://192.168.0.106:8000/api/chat/messages', config);
+       const response = await axios.get(`${ip}/api/chat/messages`, config);
       setMessages(response.data.messages); // Adjust based on your API response
       setMessageIdCounter(response.data.messages.length); // Start ID counter from existing messages length
     } catch (error) {
@@ -48,7 +50,8 @@ const Chatbox = () => {
       };
 
       // Send the message to the server
-      await axios.post('http://192.168.0.106:8000/api/send/messages', newMessage, config);
+//      await axios.post('http://192.168.0.106:8000/api/send/messages', newMessage, config);
+       await axios.post(`${ip}/api/send/messages`, newMessage, config);
 
       setMessages([...messages, newMessage]);
       setInputText('');

@@ -3,6 +3,7 @@ import { View, Text, Alert, TouchableOpacity, StyleSheet, Image } from 'react-na
 import DocumentPicker from 'react-native-document-picker';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { ip } from './global';
 
 const UploadGrades = ({ pdfUri, onFileUploaded }) => {
   const [file, setFile] = useState([]);
@@ -31,7 +32,8 @@ const UploadGrades = ({ pdfUri, onFileUploaded }) => {
       setUploading(true); // Set uploading state to true
 
       // Upload file
-      const response = await axios.post('http://192.168.0.106:8000/api/upload/grades', formData, {
+//      const response = await axios.post('http://192.168.0.106:8000/api/upload/grades', formData, {
+       const response = await axios.post(`${ip}/api/upload/grades`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${token}`,

@@ -15,7 +15,8 @@ const Jobs = () => {
 
     const handleJobs = async () => {
         try {
-            const response = await axios.get('http://192.168.0.106:8000/api/job/show');
+//            const response = await axios.get('http://192.168.0.106:8000/api/job/show');
+           const response = await axios.get('http://192.168.195.191:8000/api/job/show');
            if (response.data && response.data.data && response.data.data.data) {
                 console.log(response.data.data.data);
                 setJobs(response.data.data.data);

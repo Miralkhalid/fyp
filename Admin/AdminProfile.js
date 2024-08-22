@@ -1,29 +1,34 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, ImageBackground, Alert } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image, Alert, ImageBackground } from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+//const API_URL = 'http://192.168.0.106:8000/api';
 
 const AdminProfile = ({ navigation }) => {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
-    const [role, setRole] = useState('');
+//    const [role, setRole] = useState('');
     const [id, setId] = useState(1); // Example user ID state
-    const [editing, setEditing] = useState(true);
+    const [editing, setEditing] = useState(false);
 
     const fetchProfileData = async () => {
         try {
             const token = await AsyncStorage.getItem('jwtToken');
+             const adminId = await AsyncStorage.getItem('adminId');
             const config = {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
             };
-            const response = await axios.get(`http://192.168.0.106:8000/api/profile/edit/${id}`, config);
+            console.log(adminId);
+            const response = await axios.get(`http://192.168.0.106:8000/api/profile/edit/${adminId}`, config);
+//             const response = await axios.get(`${API_URL}/api/profile/edit/${id}`, config);
             const { data } = response.data; // Destructure the response
             const { name, email } = data.user; // Adjust based on actual response structure
             setName(name);
             setEmail(email);
-            // setPhone(phone);
+//            console.log('role', role);
+//            setRole(role); // Ensure to set the role as well
         } catch (error) {
             console.error('Error fetching profile details:', error);
             Alert.alert('Error', 'Failed to fetch profile details');
@@ -37,20 +42,22 @@ const AdminProfile = ({ navigation }) => {
     const handleSave = async () => {
         try {
             const token = await AsyncStorage.getItem('jwtToken');
+              const adminId = await AsyncStorage.getItem('adminId');
             const config = {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
             };
-            const response = await axios.post(`http://192.168.0.106:8000/api/profile/update/${id}`, {
+            const response = await axios.post(`http://192.168.0.106:8000/api/profile/update/${adminId}`, {
+//             const response = await axios.post(`${API_URL}/api/profile/update/${id}`, {
                 name: name,
                 email: email,
-                role: role,
+//                role: role,
             }, config);
 
             if (response.status === 200) {
                 Alert.alert('Success', 'Profile updated successfully');
-                setEditing(true); // Exit editing mode after save
+                setEditing(false); // Exit editing mode after save
             } else {
                 Alert.alert('Error', 'Failed to update profile');
             }
@@ -60,110 +67,102 @@ const AdminProfile = ({ navigation }) => {
         }
     };
     const handleLogout = async () => {
+        // Clear JWT token or perform logout logic if needed
         navigation.navigate('Admin');
-    }
+    };
 
     return (
         <View style={styles.container}>
-            <ImageBackground source={require('./LSIT(1).png')} style={{ height: '100%', width: '100%' }} >
-            <Text style={styles.title}>Profile</Text>
-            {/* <Text style={styles.caption}>You can edit your account here!</Text> */}
-            {/* <View style={styles.horizontal}></View> */}
-            <View style={styles.profileInfo}>
-                <TextInput
-                    style={styles.firstinput}
-                    value={name}
-                    onChangeText={setName}
-                    editable={editing}
-                />
-                <TextInput
-                    style={styles.secondinput}
-                    value={email}
-                    onChangeText={setEmail}
-                    editable={editing}
-                />
-                 <TextInput
-                    style={styles.input}
-                    value={role}
-                    // onChangeText={setEmail}
-                    // editable={editing}
-                />
-            </View>
-            <TouchableOpacity style={styles.button} onPress={handleLogout}>
-            <Text style={styles.buttonText}>Logout</Text>
-            </TouchableOpacity>
-            </ImageBackground>
+            <ImageBackground source={require('./LSIT.png')} style={{height:'100%'}}>
+                <Text style={styles.title}>Profile</Text>
+                <View style={styles.profileInfo}>
+                    <TextInput
+                        style={styles.input}
+                        value={name}
+                        onChangeText={setName}
+                        editable={editing}
+                        placeholder="Name"
+                    />
+                    <TextInput
+                        style={styles.input}
+                        value={email}
+                        onChangeText={setEmail}
+                        editable={editing}
+                        placeholder="Email"
+                    />
+//
+                </View>
+                {editing ? (
+                    <View style={styles.buttonContainer}>
+                        <TouchableOpacity style={styles.button} onPress={handleSave}>
+                            <Text style={styles.buttonText}>Save</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.button} onPress={() => setEditing(false)}>
+                            <Text style={styles.buttonText}>Cancel</Text>
+                        </TouchableOpacity>
+                    </View>
+                ) : (
+                    <TouchableOpacity style={styles.button} onPress={() => setEditing(true)}>
+                        <Text style={styles.buttonText}>Edit</Text>
+                    </TouchableOpacity>
+                )}
+                <TouchableOpacity style={styles.button} onPress={handleLogout}>
+                    <Text style={styles.buttonText}>Logout</Text>
+                </TouchableOpacity>
+                </ImageBackground>
         </View>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
+        flex: 1,
         backgroundColor: 'white',
-        // paddingHorizontal: 20,
+    },
+    backgroundImage: {
+        height: '100%',
+        width: '100%',
     },
     title: {
-        marginTop:'65%',
+        marginTop: '70%',
         fontSize: 24,
         fontWeight: '600',
         marginBottom: 10,
-        marginHorizontal:'10%',
-        color: '#3b3b66',
-    },
-    caption: {
-        marginBottom: 10,
+        marginHorizontal: '10%',
         color: '#3b3b66',
     },
     profileInfo: {
-        width: '100%',
-        marginBottom: 5,
-        marginVertical: '14%',
-        marginHorizontal: '20%',
+        width: '80%',
+        marginBottom: 15,
+        marginHorizontal: '10%',
     },
-    firstinput: {
-        paddingHorizontal: 12,
+    input: {
+        // paddingHorizontal: 12,
+        paddingVertical: 8,
         fontSize: 14,
         fontWeight: '700',
         color: '#8c8c9f',
-        justifyContent: 'center',
-    },
-    secondinput: {
-        paddingHorizontal: 12,
-        paddingVertical:'5%',
-        fontSize: 14,
-        fontWeight: '700',
-        color: '#8c8c9f',
-        justifyContent: 'center',
-    },
-    saveButton: {
-        backgroundColor: '#8c8c9f',
-        paddingVertical: 12,
-        paddingHorizontal: 35,
+        // backgroundColor: '#fff',
         borderRadius: 5,
+        borderLeftWidth:1,
+        borderColor:'#3b3b66',
+        marginBottom: 10,
     },
     button: {
         backgroundColor: "#3b3b66",
         padding: 15,
         borderRadius: 5,
         alignItems: "center",
-        width: '50%',
         marginHorizontal: '25%',
-        marginTop: '10%',
-      },
+        marginTop: 10,
+    },
     buttonText: {
-        color: '#cdcddb',
+        color: 'white',
         fontSize: 16,
         textAlign: 'center',
         fontWeight: '700',
     },
-    horizontal: {
-        marginTop: 10,
-        backgroundColor: 'black',
-        marginHorizontal: 22,
-        width: 250,
-        height: 1,
-        marginBottom: 5,
-    },
+
 });
 
 export default AdminProfile;

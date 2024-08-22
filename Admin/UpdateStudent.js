@@ -20,6 +20,7 @@ const UpdateStudent = ({ route, navigation }) => {
       const token = await AsyncStorage.getItem('jwtToken');
 
       const response = await axios.get(`http://192.168.0.106:8000/api/admin/student/show/${id}`, {
+//       const response = await axios.get(`${ip}/api/admin/student/show/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -54,17 +55,17 @@ useLayoutEffect( () => {
         student_id: newStudentId, // Corrected key to match backend
         date_of_birth: newDateOfBirth,
       };
-  
-      const url = `http://10.0.2.2:8000/api/admin/student/update/${id}`;
+
+      const url = `http://192.168.0.106:8000/api/admin/student/update/${id}`;
       console.log(`URL: ${url}`);
       console.log('Updated Data:', updatedData);
-  
+
       const response = await axios.post(url, updatedData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-  
+
       if (response.status === 200) {
         console.log('Student updated successfully');
         Alert.alert('update Student');
@@ -82,7 +83,7 @@ useLayoutEffect( () => {
       }
     }
   };
-  
+
   return (
     <View style={styles.container}>
         <ScrollView>
@@ -96,7 +97,7 @@ useLayoutEffect( () => {
         onChangeText={setNewEmail}
       />
       {errors.email && <Text style={styles.errorText}>{errors.email.join(', ')}</Text>}
-      
+
       <TextInput
         placeholder='Name'
         style={styles.input}
@@ -104,7 +105,7 @@ useLayoutEffect( () => {
         onChangeText={setNewName}
       />
       {errors.name && <Text style={styles.errorText}>{errors.name.join(', ')}</Text>}
-      
+
       <TextInput
         placeholder='Password'
         placeholderTextColor={'#cdcddb'}
@@ -122,7 +123,7 @@ useLayoutEffect( () => {
         onChangeText={setNewStudentId}
       />
       {errors.password && <Text style={styles.errorText}>{errors.password.join(', ')}</Text>}
-      
+
       <TextInput
         placeholder='Date of Birth'
         placeholderTextColor={'#cdcddb'}
@@ -131,7 +132,7 @@ useLayoutEffect( () => {
         onChangeText={setNewDateOfBirth}
       />
       {errors.date_of_birth && <Text style={styles.errorText}>{errors.date_of_birth.join(', ')}</Text>}
-      
+
       <TextInput
         placeholder='Status'
         placeholderTextColor={'#cdcddb'}
@@ -140,9 +141,9 @@ useLayoutEffect( () => {
         onChangeText={setNewStatus}
       />
       {errors.status && <Text style={styles.errorText}>{errors.status.join(', ')}</Text>}
-      
+
       {errors.general && <Text style={styles.errorText}>{errors.general}</Text>}
-      
+
       <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
         <Text style={styles.buttonText}>Save</Text>
       </TouchableOpacity>

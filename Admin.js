@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import {Alert, View, TextInput, ImageBackground, ScrollView, TouchableOpacity, Text, StyleSheet, ActivityIndicator, Modal } from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { ip } from './global';
 
 const Admin = ({ navigation }) => {
   const [email, setEmail] = useState('');
@@ -21,7 +22,7 @@ const Admin = ({ navigation }) => {
       }
       console.log(email, password );
       const response = await axios.post('http://192.168.0.106:8000/api/login',{
-        // const response = await axios.post('http://192.168.188.191:8000/api/login',{
+//         const response = await axios.post(`${ip}/api/login`,{
         email: email,
         password: password,
         role: 'admin'
@@ -29,6 +30,9 @@ const Admin = ({ navigation }) => {
       console.log('Response:', response.data);
       if (response.data && response.data.status === 'success' && response.data.data.access_token) {
         await AsyncStorage.setItem('jwtToken', response.data.data.access_token);
+        const adminId = response.data.data["user-detail"].id;
+        console.log('id', adminId);
+        await AsyncStorage.setItem('adminId', JSON.stringify(adminId));
         setSuccessModalVisible(true); // Show success modal
         setTimeout(() => {
           setSuccessModalVisible(false); // Hide success modal after 2 seconds

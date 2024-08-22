@@ -10,14 +10,15 @@ const AssignCourses = ({ route, navigation }) => {
   const [courses, setCourses] = useState([]);
   const [selectedCourses, setSelectedCourses] = useState([]);
   const [error, setError] = useState(null);
-
+const API_URL = 'http://192.168.0.106:8000/api';
   useEffect(() => {
     handleCourse();
   }, []);
 
   const handleCourse = async () => {
     try {
-      const response = await axios.get('http://192.168.0.106:8000/api/course/list');
+//      const response = await axios.get('http://192.168.0.106:8000/api/course/list');
+       const response = await axios.get(`{API_URL}/api/course/list`);
       if (response.data && response.data.data && response.data.data.data) {
         setCourses(response.data.data.data);
       }
@@ -51,7 +52,7 @@ const AssignCourses = ({ route, navigation }) => {
       const token = await AsyncStorage.getItem('jwtToken');
       console.log({selectedCourses});
       const assignresult = await axios.post(
-        `http://192.168.0.106:8000/api/admin/staff/${staffId}/assign-courses`,
+        `http://192.168.195.191:8000/api/admin/staff/${staffId}/assign-courses`,
         { course_ids: selectedCourses },
         {
           headers: {

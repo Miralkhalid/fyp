@@ -23,6 +23,7 @@ const UpdateStaffDetail = ({ route, navigation }) => {
       };
 
       const response = await axios.post(`http://192.168.0.106:8000/api/admin/staff/update/${id}`, updatedData, {
+//       const response = await axios.post(`http://192.168.195.191:8000/api/admin/staff/update/${id}`, updatedData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -59,7 +60,7 @@ const UpdateStaffDetail = ({ route, navigation }) => {
         onChangeText={setNewEmail}
       />
       {errors.email && <Text style={styles.errorText}>{errors.email.join(', ')}</Text>}
-      
+
       <TextInput
         placeholder='Name'
         placeholderTextColor={'#cdcddb'}
@@ -68,7 +69,7 @@ const UpdateStaffDetail = ({ route, navigation }) => {
         onChangeText={setNewName}
       />
       {errors.name && <Text style={styles.errorText}>{errors.name.join(', ')}</Text>}
-      
+
       <TextInput
         placeholder='New Password'
         placeholderTextColor={'#cdcddb'}
@@ -78,7 +79,7 @@ const UpdateStaffDetail = ({ route, navigation }) => {
         secureTextEntry
       />
       {errors.password && <Text style={styles.errorText}>{errors.password.join(', ')}</Text>}
-      
+
       <TextInput
         placeholder='Date of Birth'
         placeholderTextColor={'#cdcddb'}
@@ -96,9 +97,9 @@ const UpdateStaffDetail = ({ route, navigation }) => {
         onChangeText={setNewStatus}
       />
       {errors.status && <Text style={styles.errorText}>{errors.status.join(', ')}</Text>}
-      
+
       {errors.general && <Text style={styles.errorText}>{errors.general}</Text>}
-      
+
       <TouchableOpacity style={styles.button} onPress={handleSave}>
         <Text style={styles.buttonText}>Save</Text>
       </TouchableOpacity>

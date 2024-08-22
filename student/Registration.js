@@ -3,6 +3,7 @@ import { View, Text, FlatList, StyleSheet, TouchableOpacity, Alert } from 'react
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Searchbar } from 'react-native-paper';
+import { ip } from './global';
 
 const Registration = () => {
     const [course, setCourse] = useState([]);
@@ -10,18 +11,17 @@ const Registration = () => {
     const [selectedCourse, setSelectedCourse] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [filteredCourse, setFilteredCourse] = useState([]);
-  
+
     useEffect(() => {
         fetchCourses();
     }, []);
 
     const fetchCourses = async () => {
         try {
-            const response = await axios.get('http://192.168.0.106:8000/api/course/list');
+            const response = await axios.get(`${ip}/api/course/list`);
             if (response.data && response.data.data && response.data.data.data) {
                 setCourse(response.data.data.data);
-                setFilteredCourse(response.data.data);
-
+                setFilteredCourse(response.data.data.data); // Updated to match data structure
             }
         } catch (error) {
             console.error('Error fetching course:', error);
@@ -29,22 +29,22 @@ const Registration = () => {
         }
     };
 
-    const sendApprovalRequest = async (item) => {
+    const sendApprovalRequest = async (courseId) => {
         try {
             const token = await AsyncStorage.getItem('jwtToken');
-            const response = await axios.post(`http://192.168.0.106:8000/api/course-registeration/${item.id}/register`, {
-            // const response = await axios.post(`http://192.168.188.191:8000/api/course-registeration/${item.id}/register`, {
-                course_id: item.id,
-            }, {
+//            const response = await axios.post(`http://192.168.0.106:8000/api/course-registeration/${courseId}/register`,
+             const response = await axios.post(`http://192.168.195.191:8000/api/course-registeration/${courseId}/register`,
+            {}, // Empty body if course_id is only in the URL
+            {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
             });
 
             if (response.status === 200) {
-                Alert.alert('Approval Request Sent', `Approval request for ${student_id} has been sent.`);
+                Alert.alert('Approval Request Sent', `Approval request for course ID ${courseId} has been sent.`);
             } else {
-                Alert.alert('Approval Failed', `Failed to send approval request for ${student_id}. Status code: ${response.status}`);
+                Alert.alert('Approval Failed', `Failed to send approval request for course ID ${courseId}. Status code: ${response.status}`);
             }
         } catch (error) {
             console.error('Error sending approval request:', error);
@@ -53,8 +53,6 @@ const Registration = () => {
     };
 
     const handleSelectCourse = async (item) => {
-        const matchingCourses = selectedCourse.filter(course => course.code === item.code);
-        console.log(matchingCourses);
         try {
             if (selectedCourse.find(course => course.id === item.id)) {
                 Alert.alert('Already Selected', `You have already selected ${item.name}`);
@@ -68,19 +66,20 @@ const Registration = () => {
             Alert.alert('Error', `Error handling course selection: ${error.message}`);
         }
     };
+
     const filterCourse = () => {
         const lowercasedFilter = searchQuery.toLowerCase();
         const filteredData = course.filter(item => {
-          return Object.keys(item).some(key =>
-            String(item[key]).toLowerCase().includes(lowercasedFilter)
-          );
+            return Object.keys(item).some(key =>
+                String(item[key]).toLowerCase().includes(lowercasedFilter)
+            );
         });
         setFilteredCourse(filteredData);
-      };
-      
-      useEffect(() => {
+    };
+
+    useEffect(() => {
         filterCourse();
-      }, [searchQuery, course]);
+    }, [searchQuery, course]);
 
     const renderItem = ({ item }) => (
         <TouchableOpacity
@@ -100,12 +99,12 @@ const Registration = () => {
 
     return (
         <View style={styles.container}>
-      <Searchbar
-        placeholder="Search"
-        onChangeText={setSearchQuery}
-        value={searchQuery}
-        style={{ backgroundColor: '#cdcddb' }}
-      />
+            <Searchbar
+                placeholder="Search"
+                onChangeText={setSearchQuery}
+                value={searchQuery}
+                style={{ backgroundColor: '#cdcddb' }}
+            />
             {error ? (
                 <Text style={styles.error}>Error: {error}</Text>
             ) : (
@@ -142,15 +141,6 @@ const styles = StyleSheet.create({
         color: 'white',
         marginBottom: 4,
         fontWeight: '300',
-    },
-    email: {
-        fontSize: 16,
-        marginBottom: 4,
-    },
-    department: {
-        fontSize: 14,
-        color: '#555',
-        marginBottom: 4,
     },
     error: {
         fontSize: 18,

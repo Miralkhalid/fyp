@@ -17,9 +17,10 @@ const Courses = ({navigation}) => {
                 department,
                 semester,
                 credit_hour,
-                
+
             });
-            const response = await axios.post('http://192.168.0.106:8000/api/course/create', {
+//            const response = await axios.post('http://192.168.0.106:8000/api/course/create', {
+             const response = await axios.post('http://192.168.195.191:8000/api/course/create', {
                 code: code,
                 name:  name,
                 department: department,
@@ -27,10 +28,10 @@ const Courses = ({navigation}) => {
                 credit_hour:credit_hour,
                 created_by: 1,
             });
-        
+
             Alert.alert('Success', 'Course created successfully');
             console.log(response.data);
-            
+
         } catch (error) {
             console.error('Error creating course:', error);
             Alert.alert('Error', 'Failed to create course');
@@ -41,7 +42,7 @@ const Courses = ({navigation}) => {
      <View style={styles.container}>
         <ScrollView>
        <ImageBackground source={require('./lsitlogobg.png')} style={{height:'120%', width:'100%'}}>
-      
+
         <View style={styles.form}>
         <Text style={styles.caption}>Enter Course Details !</Text>
             <TextInput
@@ -85,10 +86,13 @@ const Courses = ({navigation}) => {
             <TouchableOpacity style={styles.button2} onPress={() => navigation.navigate('CourseList')}>
                 <Text style={styles.buttonText}>Course List</Text>
             </TouchableOpacity>
+            <TouchableOpacity style={styles.button2} onPress={() => navigation.navigate('Approval')}>
+                <Text style={styles.buttonText}>Approval</Text>
+            </TouchableOpacity>
         </View>
         </ImageBackground>
         </ScrollView>
-        </View> 
+        </View>
     );
 };
 
@@ -97,8 +101,8 @@ const styles = StyleSheet.create({
      backgroundColor:'white',
     height:'100%',
    },
-    form: {   
-        marginTop:'50%', 
+    form: {
+        marginTop:'50%',
         // padding: 10,
         backgroundColor: '#fff',
        // justifyContent:'center',

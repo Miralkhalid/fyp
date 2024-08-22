@@ -3,8 +3,9 @@ import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native
 import axios from 'axios';
 import { Searchbar } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { ip } from './global';
 
-const Library = () => {
+const Library = ({navigation}) => {
     const [book, setBook] = useState([]);
     const [error, setError] = useState(null);
     const [searchQuery, setSearchQuery] = useState('');
@@ -24,7 +25,7 @@ const Library = () => {
                 }
             };
             // Sending GET request without parameters
-            const response = await axios.get('http://192.168.0.106:8000/api/book/get', config);
+             const response = await axios.get(`${ip}/api/book/get`, config);
 
             if (response.data && response.data.data && response.data.data.book) {
                 console.log(response.data.data.book);
@@ -46,7 +47,7 @@ const Library = () => {
         });
         setFilteredBook(filteredBook);
     };
-      
+
     useEffect(() => {
         filterBook();
     }, [searchQuery, book]);
@@ -56,6 +57,14 @@ const Library = () => {
             <Text style={styles.style}><Text style={{fontWeight: '500', color: 'white'}}>Book Name: </Text>{item.book_name}</Text>
             <Text style={styles.style}><Text style={{fontWeight: '500', color: 'white'}}>Author Name: </Text>{item.author_name}</Text>
             <Text style={styles.style}><Text style={{fontWeight: '500', color: 'white'}}>Published Year: </Text>{item.published_year}</Text>
+            <View style={styles.btncon}>
+                <TouchableOpacity
+                    style={styles.updateButton}
+                    onPress={() => navigation.navigate('Issue')} // Pass the item id here
+                >
+                    <Text style={styles.deleteButtonText}>Issue</Text>
+                </TouchableOpacity>
+            </View>
         </View>
     );
 

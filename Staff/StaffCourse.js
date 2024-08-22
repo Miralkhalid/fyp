@@ -3,6 +3,7 @@ import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Searchbar } from 'react-native-paper';
+import { ip } from './global';
 
 const StaffCourse = ({navigation}) => {
     const [course, setCourse] = useState([]);
@@ -29,6 +30,7 @@ const StaffCourse = ({navigation}) => {
             const token = await AsyncStorage.getItem('jwtToken');
 
             const response = await axios.get(`http://192.168.0.106:8000/api/admin/staff/${staffId}/courses`, {
+//                 const response = await axios.get(`${ip}/api/admin/staff/${staffId}/courses`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },

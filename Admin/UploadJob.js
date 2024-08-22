@@ -11,7 +11,7 @@ const UploadJob = ({navigation}) => {
 
     const handleUploadJob = async () => {
         try {
-         
+
            console.log(
             {
                 title,
@@ -22,6 +22,7 @@ const UploadJob = ({navigation}) => {
             }
            );
                 const response = await axios.post('http://192.168.0.106:8000/api/job/store', {
+//                 const response = await axios.post(`${ip}/api/job/store`, {
                     title: title,
                     company: company,
                     location: location,
@@ -42,7 +43,7 @@ const UploadJob = ({navigation}) => {
     };
 
     return (
-        
+
         <View style={styles.container}>
             <ScrollView>
             <Image source={require('./download.png')} style={{height:'20%',width:'35%', alignSelf:'center', marginTop:'10%'}}></Image>
@@ -94,7 +95,7 @@ const UploadJob = ({navigation}) => {
             </View>
             </ScrollView>
              </View>
-        
+
     );
 };
 
@@ -120,6 +121,7 @@ const styles = StyleSheet.create({
         height: 40,
         borderColor: '#3b3b66',
         borderWidth: 1,
+        color:'#3b3b66',
         marginBottom: 10,
         borderRadius: 10,
         paddingHorizontal: 10,

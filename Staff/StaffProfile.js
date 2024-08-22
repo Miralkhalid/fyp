@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, ImageBackground, Alert } from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { ip } from './global';
 
 const StaffProfile = ({ navigation }) => {
     const [name, setName] = useState('');
@@ -20,8 +21,8 @@ const StaffProfile = ({ navigation }) => {
                     Authorization: `Bearer ${token}`
                 }
             };
-            const response = await axios.get(`http://192.168.0.106:8000/api/profile/edit/${staffId}`, config);
-            const { data } = response.data; 
+            const response = await axios.get(`${ip}/api/profile/edit/${staffId}`, config);
+            const { data } = response.data;
             const { name, email } = data; 
             setName(name);
             setEmail(email);
@@ -44,7 +45,7 @@ const StaffProfile = ({ navigation }) => {
                     Authorization: `Bearer ${token}`
                 }
             };
-            const response = await axios.post(`http://192.168.0.106:8000/api/profile/update/${staffId}`, {
+            const response = await axios.post(`${ip}/api/profile/update/${staffId}`, {
                 name: name,
                 email: email,
             }, config);

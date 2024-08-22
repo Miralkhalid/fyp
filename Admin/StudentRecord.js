@@ -16,6 +16,7 @@ const StudentRecord = ({ navigation }) => {
       const token = await AsyncStorage.getItem('jwtToken');
 
       const response = await axios.get('http://192.168.0.106:8000/api/admin/student/list', {
+//       const response = await axios.get('http://192.168.195.191:8000/api/admin/student/list', {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -55,6 +56,7 @@ const StudentRecord = ({ navigation }) => {
       const token = await AsyncStorage.getItem('jwtToken');
 
       const response = await axios.delete(`http://192.168.0.106:8000/api/admin/student/delete/${id}`, {
+//       const response = await axios.delete(`http://192.168.195.191:8000/api/admin/student/delete/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -68,7 +70,7 @@ const StudentRecord = ({ navigation }) => {
       setError(error.message);
     }
   };
-  
+
   const handleRefresh = async () => {
     setRefreshing(true);
     await handleStudent();

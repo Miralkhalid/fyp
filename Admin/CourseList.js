@@ -3,6 +3,7 @@ import { View, Text, FlatList, StyleSheet } from 'react-native';
 import axios from 'axios';
 import { Searchbar } from 'react-native-paper';
 
+const API_URL = 'http://192.168.0.106:8000/api';
 const CourseList = () => {
     const [course, setCourse] = useState([]);
     const [error, setError] = useState(null);
@@ -15,7 +16,8 @@ const CourseList = () => {
 
     const handleCourse = async () => {
         try {
-            const response = await axios.get('http://192.168.0.106:8000/api/course/list');
+//            const response = await axios.get('http://192.168.0.106:8000/api/course/list');
+             const response = await axios.get('http://192.168.195.191:8000/api/course/list');
             if (response.data && response.data.data && response.data.data.data) {
                 console.log(response.data.data.data);
                 setCourse(response.data.data.data);
