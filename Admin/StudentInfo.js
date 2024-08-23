@@ -33,7 +33,7 @@ import React, { useState } from 'react';
           }
         };
 //        const response = await axios.post(`http://192.168.0.106:8000/api/admin/student/create`, {
-         const response = await axios.post(`http://192.168.195.191:8000/api/admin/student/create`, {
+         const response = await axios.post('http://192.168.166.191:8000/api/admin/student/create', {
           email,
           name,
           password,
