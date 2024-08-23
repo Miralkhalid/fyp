@@ -51,7 +51,7 @@ const StudentAttendance = () => {
             ]
         };
 
-        const response = await axios.post(`${ip}/api/staff/mark-student-attendance`,
+        const response = await axios.post(`http://192.168.0.106:8000/api/staff/mark-student-attendance`,
             data, // Data is passed here as the second argument
             config
         );

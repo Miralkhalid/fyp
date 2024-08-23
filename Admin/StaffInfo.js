@@ -4,7 +4,7 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 //const API_URL = 'http://192.168.0.106:8000/api';
- const API_URL = 'http://192.168.195.191:8000/api';
+ const API_URL = 'http://192.168.166.191:8000/api';
 
 const StaffInfo = ({navigation}) => {
   const [email, setEmail] = useState('');

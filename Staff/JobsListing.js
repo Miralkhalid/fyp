@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, StyleSheet } from 'react-native';
 import axios from 'axios';
 import { Searchbar } from 'react-native-paper';
-import { ip } from './global';
+//import { ip } from './global';
 
 const JobsListing = () => {
     const [jobs, setJobs] = useState([]);
@@ -16,7 +16,7 @@ const JobsListing = () => {
 
     const handleJobs = async () => {
         try {
-               const response = await axios.get(`${ip}/api/job/show`);
+               const response = await axios.get(`http://192.168.166.191:8000/api/job/show`);
            if (response.data && response.data.data && response.data.data.data) {
                 console.log(response.data.data.data);
                 setJobs(response.data.data.data);

@@ -19,7 +19,7 @@ const CreateIdCard = () => {
 
     try {
       console.log({ name, email, phone_no, address, student_id });
-      const response = await axios.post('http://192.168.0.106:8000/api/student/card-create', {
+      const response = await axios.post('http://192.168.166.191:8000/api/student/card-create', {
 //       const response = await axios.post('http://192.168.195.191:8000/api/student/card-create', {
         id,
         name,

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, StyleSheet } from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { ip } from './global';
+//import { ip } from './global';
 
 const RegisteredCourses = () => {
     const [courses, setCourses] = useState([]);
@@ -17,7 +17,7 @@ const RegisteredCourses = () => {
             const student_id = await AsyncStorage.getItem('studentId');
             console.log(student_id);
             const token = await AsyncStorage.getItem('jwtToken');
-             const url = `${ip}/api/course-registeration/courses/${student_id}/approved`;
+             const url = `http://192.168.166.191:8000/api/course-registeration/courses/${student_id}/approved`;
 
             console.log('Fetching URL:', url); // Debug URL
 

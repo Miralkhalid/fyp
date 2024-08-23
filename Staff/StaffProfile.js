@@ -21,7 +21,7 @@ const StaffProfile = ({ navigation }) => {
                     Authorization: `Bearer ${token}`
                 }
             };
-            const response = await axios.get(`${ip}/api/profile/edit/${staffId}`, config);
+            const response = await axios.get(`http://192.168.166.191:8000/api/profile/edit/${staffId}`, config);
             const { data } = response.data;
             const { name, email } = data; 
             setName(name);
@@ -45,7 +45,7 @@ const StaffProfile = ({ navigation }) => {
                     Authorization: `Bearer ${token}`
                 }
             };
-            const response = await axios.post(`${ip}/api/profile/update/${staffId}`, {
+            const response = await axios.post(`http://192.168.166.191:8000/api/profile/update/${staffId}`, {
                 name: name,
                 email: email,
             }, config);

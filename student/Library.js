@@ -25,7 +25,7 @@ const Library = ({navigation}) => {
                 }
             };
             // Sending GET request without parameters
-             const response = await axios.get(`${ip}/api/book/get`, config);
+             const response = await axios.get('http://192.168.166.191:8000/api/book/get', config);
 
             if (response.data && response.data.data && response.data.data.book) {
                 console.log(response.data.data.book);

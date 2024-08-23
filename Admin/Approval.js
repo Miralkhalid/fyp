@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-const API_URL = 'http://192.168.0.106:8000/api';
+//const API_URL = 'http://192.168.0.106:8000/api';
 const Approval = () => {
     const [courseData, setCourseData] = useState([]);
     const [error, setError] = useState(null);
@@ -21,7 +21,7 @@ const Approval = () => {
 
         try {
 //            const response = await axios.get('http://192.168.0.106:8000/api/course-registeration/pending-approvals', config);
-             const response = await axios.get(`${API_URL}/api/course-registeration/pending-approvals`, config);
+             const response = await axios.get(`http://192.168.166.191:8000/api/course-registeration/pending-approvals`, config);
             if (response.data && response.data.data) {
                 setCourseData(response.data.data);
             } else {
@@ -44,8 +44,8 @@ const Approval = () => {
             student_id: student_id
         };
         console.log(course_id,'course_id, student_id', student_id);
-//        const url = `http://192.168.0.106:8000/api/course-registeration/${course_id}/approve`;
-         const url = `${API_URL}/api/course-registeration/${course_id}/approve`;
+//        const url = `http://192.168.166.191:8000/api/course-registeration/${course_id}/approve`;
+         const url = `http://192.168.166.191:8000/api/course-registeration/${course_id}/approve`;
 
         try {
             console.log(`Sending request to: ${url}`); // Log the URL to check correctness

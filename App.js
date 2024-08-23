@@ -55,6 +55,7 @@ import StudentPDFViewer from './student/StudentPDFViewer';
 import Library from './student/Library';
 import Issue from './student/Issue';
 import Approval from './Admin/Approval';
+import StudentList from './Admin/StudentList';
 
   const Stack = createNativeStackNavigator();
 
@@ -115,6 +116,7 @@ const App = () => {
     <Stack.Screen name="Library" component={Library}></Stack.Screen>
     <Stack.Screen name="Issue" component={Issue}></Stack.Screen>
     <Stack.Screen name="Approval" component={Approval}></Stack.Screen>
+    <Stack.Screen name="StudentList" component={StudentList}></Stack.Screen>
     </Stack.Navigator>
     </NavigationContainer>
   )

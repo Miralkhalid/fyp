@@ -23,7 +23,7 @@ const Profile = ({ navigation }) => {
                     Authorization: `Bearer ${token}`
                 }
             };
-             const response = await axios.get(`${ip}/api/profile/edit/${studentId}`, config);
+             const response = await axios.get(`http://192.168.166.191:8000/api/profile/edit/${studentId}`, config);
             const { data } = response.data; // Destructure the response
             const { name, email } = data.user; // Adjust based on actual response structure
             setName(name);
@@ -48,7 +48,7 @@ const Profile = ({ navigation }) => {
                     Authorization: `Bearer ${token}`
                 }
             };
-             const response = await axios.post(`${ip}/api/profile/update/${userId}`, {
+             const response = await axios.post(`http://192.168.166.191:8000/api/profile/update/${userId}`, {
                 name: name,
                 email: email,
                 role: role,

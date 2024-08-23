@@ -3,7 +3,7 @@ import { View, Text, FlatList, TextInput, StyleSheet } from 'react-native';
 import { IconButton } from 'react-native-paper';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { ip } from './global';
+//import { ip } from './global';
 
 const AlumniChatbox = () => {
   const [messages, setMessages] = useState([]);
@@ -23,7 +23,7 @@ const AlumniChatbox = () => {
           Authorization: `Bearer ${token}`
         }
       };
-       const response = await axios.get(`${ip}/api/chat/messages/${receiver_id}`, config);
+       const response = await axios.get(`http://192.168.166.191:8000/api/chat/messages/${receiver_id}`, config);
       setMessages(response.data.messages); // Adjust based on your API response
       setMessageIdCounter(response.data.messages.length); // Start ID counter from existing messages length
     } catch (error) {
@@ -54,7 +54,7 @@ const AlumniChatbox = () => {
 
       // Send the message to the server
 
-        await axios.post(`${ip}/api/chat/send`, messagePayload, config);
+        await axios.post('http://192.168.166.191:8000/api/chat/send', messagePayload, config);
       const newMessage = {
         id: messageIdCounter,
         text: inputText,

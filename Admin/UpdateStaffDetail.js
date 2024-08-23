@@ -22,7 +22,7 @@ const UpdateStaffDetail = ({ route, navigation }) => {
         date_of_birth: newDateOfBirth,
       };
 
-      const response = await axios.post(`http://192.168.0.106:8000/api/admin/staff/update/${id}`, updatedData, {
+      const response = await axios.post(`http://192.168.166.191:8000/api/admin/staff/update/${id}`, updatedData, {
 //       const response = await axios.post(`http://192.168.195.191:8000/api/admin/staff/update/${id}`, updatedData, {
         headers: {
           Authorization: `Bearer ${token}`,

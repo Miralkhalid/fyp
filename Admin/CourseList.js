@@ -17,7 +17,7 @@ const CourseList = () => {
     const handleCourse = async () => {
         try {
 //            const response = await axios.get('http://192.168.0.106:8000/api/course/list');
-             const response = await axios.get('http://192.168.195.191:8000/api/course/list');
+             const response = await axios.get('http://192.168.166.191:8000:8000/api/course/list');
             if (response.data && response.data.data && response.data.data.data) {
                 console.log(response.data.data.data);
                 setCourse(response.data.data.data);

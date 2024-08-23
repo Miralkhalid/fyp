@@ -40,7 +40,7 @@ const Header = () => {
 
         <View style={styles.box}>
           <View style={styles.inner}>
-          <TouchableOpacity onPress={() => navigation.navigate('AdminChatbox')}>
+          <TouchableOpacity onPress={() => navigation.navigate('StudentList')}>
                 <Text style={styles.button}>Chatbox</Text>
             </TouchableOpacity>
           </View>  

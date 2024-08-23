@@ -10,7 +10,7 @@ const Grades = () => {
   useEffect(() => {
     const fetchPdf = async () => {
       try {
-        const response = await axios.get(`${ip}/api/fetch-grade/student/${id}`, {
+        const response = await axios.get(`http://192.168.166.191:8000/api/fetch-grade/student/${id}`, {
           responseType: 'blob', // Important
         });
         const pdfBlob = response.data;

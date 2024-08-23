@@ -24,6 +24,7 @@ const FeeStructure = ({ pdfUri, onFileUploaded }) => {
         type: doc[0].type,
         name: doc[0].name,
       });
+      formData.append('student_id', studentId);
       console.log('FormData:', formData);
 
       // Get JWT token from AsyncStorage
@@ -31,7 +32,7 @@ const FeeStructure = ({ pdfUri, onFileUploaded }) => {
       setUploading(true); // Set uploading state to true
 
       // Upload file
-      const response = await axios.post('http://192.168.0.106:8000/api/upload/fees', formData, {
+      const response = await axios.post('http://192.168.166.191:8000/api/upload/fees', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${token}`,

@@ -3,7 +3,7 @@ import { Alert, View, TextInput, ImageBackground, ScrollView, TouchableOpacity, 
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {RadioButton} from 'react-native-paper';
-import { ip } from './global';
+//import { ip } from './global';
 
 const Login = ({ navigation }) => {
   const [email, setEmail] = useState('');
@@ -23,8 +23,8 @@ const Login = ({ navigation }) => {
         return;
       }
       console.log(email, password );
-//      const response = await axios.post('http://192.168.0.106:8000/api/login',{
-       const response = await axios.post(`${ip}/api/login`,{
+      const response = await axios.post('http://192.168.0.106:8000/api/login',{
+//       const response = await axios.post(`${ip}/api/login`,{
         email: email,
         password: password,
         role: 'student'

@@ -21,7 +21,7 @@ const AdminProfile = ({ navigation }) => {
                 }
             };
             console.log(adminId);
-            const response = await axios.get(`http://192.168.0.106:8000/api/profile/edit/${adminId}`, config);
+            const response = await axios.get(`http://192.168.166.191:8000/api/profile/edit/${adminId}`, config);
 //             const response = await axios.get(`${API_URL}/api/profile/edit/${id}`, config);
             const { data } = response.data; // Destructure the response
             const { name, email } = data.user; // Adjust based on actual response structure
@@ -48,7 +48,7 @@ const AdminProfile = ({ navigation }) => {
                     Authorization: `Bearer ${token}`
                 }
             };
-            const response = await axios.post(`http://192.168.0.106:8000/api/profile/update/${adminId}`, {
+            const response = await axios.post(`http://192.168.166.191:8000/api/profile/update/${adminId}`, {
 //             const response = await axios.post(`${API_URL}/api/profile/update/${id}`, {
                 name: name,
                 email: email,

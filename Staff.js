@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import {Alert, View, TextInput, ImageBackground, ScrollView, TouchableOpacity, Text, StyleSheet, ActivityIndicator, Modal } from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { ip } from './global';
+//import { ip } from './global';
 
 const Staff = ({ navigation }) => {
   const [email, setEmail] = useState('');
@@ -21,8 +21,8 @@ const Staff = ({ navigation }) => {
         return;
       }
       console.log(email, password );
-//      const response = await axios.post('http://192.168.0.106:8000/api/login',{
-         const response = await axios.post(`${ip}/api/login`,{
+      const response = await axios.post('http://192.168.0.106:8000/api/login',{
+//         const response = await axios.post('http://192.168.166.191:8000/api/login',{
         email: email,
         password: password,
         role: 'staff'
