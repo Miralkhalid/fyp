@@ -3,7 +3,7 @@ import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native
 import axios from 'axios';
 import { Searchbar } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { ip } from './global';
+//import { ip } from './global';
 
 const Library = ({navigation}) => {
     const [book, setBook] = useState([]);
@@ -25,7 +25,7 @@ const Library = ({navigation}) => {
                 }
             };
             // Sending GET request without parameters
-             const response = await axios.get('http://192.168.166.191:8000/api/book/get', config);
+             const response = await axios.get('http://192.168.0.106:8000/api/book/get', config);
 
             if (response.data && response.data.data && response.data.data.book) {
                 console.log(response.data.data.book);

@@ -17,7 +17,7 @@ const RegisteredCourses = () => {
             const student_id = await AsyncStorage.getItem('studentId');
             console.log(student_id);
             const token = await AsyncStorage.getItem('jwtToken');
-             const url = `http://192.168.166.191:8000/api/course-registeration/courses/${student_id}/approved`;
+             const url = `http://192.168.0.106:8000/api/course-registeration/courses/${student_id}/approved`;
 
             console.log('Fetching URL:', url); // Debug URL
 

@@ -4,6 +4,7 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Searchbar } from 'react-native-paper';
 import { ip } from './global';
+//import { useNavigation } from '@react-navigation/native';
 
 const StaffCourse = ({navigation}) => {
     const [course, setCourse] = useState([]);
@@ -29,13 +30,14 @@ const StaffCourse = ({navigation}) => {
         try {
             const token = await AsyncStorage.getItem('jwtToken');
 
-            const response = await axios.get(`http://192.168.0.106:8000/api/admin/staff/${staffId}/courses`, {
+            const response = await axios.get(`http://192.168.0.106:8000/api/staff/assign-courses`, {
+//  const response = await axios.get(`http://192.168.0.106:8000/api/admin/staff/${staffId}/courses`, {
 //                 const response = await axios.get(`${ip}/api/admin/staff/${staffId}/courses`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
             });
-
+console.log('staffid', response);
                 if (response.data.data.courses) {
                     console.log(response.data.data.courses);
                     setCourse(response.data.data.courses);
@@ -48,6 +50,7 @@ const StaffCourse = ({navigation}) => {
                 setError(error.message);
             }
     };
+
     const filterCourse = () => {
         const lowercasedFilter = searchQuery.toLowerCase();
         const filteredData = course.filter(item => {
@@ -71,7 +74,7 @@ const StaffCourse = ({navigation}) => {
             <Text style={styles.style}><Text style={{fontWeight:'500', color:'white'}}>semester: </Text>{item.semester}</Text>
             <Text style={styles.style}><Text style={{fontWeight:'500', color:'white'}}>credit_hour: </Text>{item.credit_hour}</Text>
             <View style={styles.btncon}>
-        <TouchableOpacity style={styles.updateButton} onPress={() => navigation.navigate('StudentAttendance')}>
+        <TouchableOpacity style={styles.updateButton} onPress={() => navigation.navigate('StudentAttendance', { id: item.id})}>
           <Text style={styles.Text}>Attendance</Text>
         </TouchableOpacity>
         </View>

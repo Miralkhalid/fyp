@@ -18,7 +18,7 @@ const Registration = () => {
 
     const fetchCourses = async () => {
         try {
-            const response = await axios.get('http://192.168.166.191:8000/api/course/list');
+            const response = await axios.get('http://192.168.0.106:8000/api/course/list');
             if (response.data && response.data.data && response.data.data.data) {
                 setCourse(response.data.data.data);
                 setFilteredCourse(response.data.data.data); // Updated to match data structure
@@ -32,8 +32,8 @@ const Registration = () => {
     const sendApprovalRequest = async (courseId) => {
         try {
             const token = await AsyncStorage.getItem('jwtToken');
-//            const response = await axios.post(`http://192.168.0.106:8000/api/course-registeration/${courseId}/register`,
-             const response = await axios.post(`http://192.168.166.191:8000/api/course-registeration/${courseId}/register`,
+            const response = await axios.post(`http://192.168.0.106:8000/api/course-registeration/${courseId}/register`,
+//             const response = await axios.post(`http://192.168.166.191:8000/api/course-registeration/${courseId}/register`,
             {}, // Empty body if course_id is only in the URL
             {
                 headers: {

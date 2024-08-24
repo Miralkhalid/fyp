@@ -1,20 +1,38 @@
+
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, RadioButton, ScrollView, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, StyleSheet, ActivityIndicator } from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { ip } from './global';
+import { RadioButton } from 'react-native-paper'; // Ensure this library is installed
 
-const StudentAttendance = () => {
+const StudentAttendance = ({ route }) => {
+  const { id } = route.params;
   const [students, setStudents] = useState([]);
-  const [selectedStudents, setSelectedStudents] = useState('');
+  const [selectedStudents, setSelectedStudents] = useState({});
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     // Fetch the students list from the API
     const fetchStudents = async () => {
       try {
-        const response = await axios.get(`http://192.168.0.106:8000/api/staff/assign-courses`); // Replace with your actual endpoint;
-        setStudents(response.data);
+        const token = await AsyncStorage.getItem('jwtToken');
+        const response = await axios.get(
+          `http://192.168.0.106:8000/api/staff/getCourseStudent/${id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        // Extract the student data
+        if (response && response.data && response.data.data && response.data.data.Student) {
+          console.log('Fetched Students:', response.data.data.Student);
+          setStudents(response.data.data.Student);
+        } else {
+          console.error('Unexpected response format:', response);
+        }
+
         setLoading(false);
       } catch (error) {
         console.error('Error fetching students:', error);
@@ -23,82 +41,71 @@ const StudentAttendance = () => {
     };
 
     fetchStudents();
-  }, []);
+  }, [id]);
 
   const handleSelectStudent = (studentId) => {
     setSelectedStudents(prevState => ({
       ...prevState,
-      [studentId]: !prevState[studentId] // Toggle the attendance status
+      [studentId]: !prevState[studentId], // Toggle the attendance status
     }));
   };
-  const handleSubmit = async () => {
-    try {
-        const token = await AsyncStorage.getItem('jwtToken');
-        const config = {
-            headers: {
-                Authorization: `Bearer ${token}` // Corrected the syntax here
-            }
-        };
 
-        console.log('JWT Token:', token); // Check the token value here
-        console.log('Selected Students:', selectedStudents);
+ const handleSubmit = async () => {
+   try {
+     // Retrieve the JWT token from AsyncStorage
+     const token = await AsyncStorage.getItem('jwtToken');
 
-        const data = {
-            course_id: 2,
-            students: [
-                { id: 2, attendance: 'leave' },
-                { id: 1, attendance: 'absent' }
-            ]
-        };
+     // Configuration for the Axios request
+     const config = {
+       headers: {
+         Authorization: `Bearer ${token}`,
+       },
+     };
 
-        const response = await axios.post(`http://192.168.0.106:8000/api/staff/mark-student-attendance`,
-            data, // Data is passed here as the second argument
-            config
-        );
+     // Log the token and selected students for debugging
+     console.log('JWT Token:', token);
+     console.log('Selected Students:', selectedStudents);
 
-        console.log('Response:', response);
-        alert('Attendance marked successfully!');
-    } catch (error) {
-        console.error('Error marking attendance:', error);
-        alert('Error marking attendance');
-    }
-};
+     // Prepare the data payload to send in the POST request
+     const data = {
+       course_id: id, // Ensure 'id' is defined and passed from the route params or context
+       students: Object.keys(selectedStudents).map(studentId => ({
+         id: parseInt(studentId, 10), // Ensure the ID is parsed as an integer
+         attendance: selectedStudents[studentId] ? 'present' : 'absent', // Adjust attendance logic if needed
+       })),
+     };
 
+     // Log the data for debugging
+     console.log('Payload Data:', data);
 
-//   const handleSubmit = async () => {
-//     try {
-//         const token = await AsyncStorage.getItem('jwtToken');
-//         const config = {
-//             headers: {
-//               Authorization: `Bearer ${token}` // Corrected the syntax here
-//             }
-//           };
-//         console.log('JWT Token:', token); // Check the token value here
-//         console.log('selected', selectedStudents);
+     // Send the POST request to mark attendance
+     const response = await axios.post(
+       'http://192.168.0.106:8000/api/staff/mark-student-attendance',
+       data,
+        config
+     );
 
-//         const response = await axios.post(
-//             'http://192.168.0.106:8000/api/staff/mark-student-attendance',
-//             data: {
-//                 course_id: 2,
-//                 students: [
-//                     // { id: 11, attendance: 'leave' },
-//                     { id: 13, attendance: 'absent' }
-//                 ]
-//             },
-//             config,
-//         );
+     // If the response is successful, log and alert the user
+     if (response) {
+       console.log('Attendance Response:', response);
+     }
 
-//         console.log('response', response);
-//         alert('Attendance marked successfully!');
-//     } catch (error) {
-//         console.error('Error marking attendance:', error);
-//         alert('Error marking attendance');
-//     }
-// };
+     alert('Attendance marked successfully!');
+   } catch (error) {
+     // Log the error and alert the user in case of failure
+     console.error('Error marking attendance:', error.message);
+     alert('Error marking attendance');
+   }
+ };
 
-  if (loading) {
-    return <ActivityIndicator size="large" color="#0000ff" />;
-  }
+ // Handle loading state (this should be part of your component render logic)
+ if (loading) {
+   return <ActivityIndicator size="large" color="#0000ff" />;
+ }
+
+ // Log the selected students for debugging outside of the async function
+ console.log('Selected Students:', selectedStudents);
+
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -107,7 +114,7 @@ const StudentAttendance = () => {
           <View key={student.id} style={styles.studentContainer}>
             <Text style={styles.studentName}>{student.name}</Text>
             <RadioButton
-              value={student.id}
+              value={student.id.toString()}
               status={selectedStudents[student.id] ? 'checked' : 'unchecked'}
               onPress={() => handleSelectStudent(student.id)}
             />
@@ -116,9 +123,9 @@ const StudentAttendance = () => {
       ) : (
         <Text>No students available</Text>
       )}
-           <TouchableOpacity style={styles.button2} onPress={handleSubmit}>
-                <Text style={styles.buttonText}>Submit Attendance</Text>
-            </TouchableOpacity>
+      <TouchableOpacity style={styles.button2} onPress={handleSubmit}>
+        <Text style={styles.buttonText}>Submit Attendance</Text>
+      </TouchableOpacity>
     </ScrollView>
   );
 };
@@ -127,7 +134,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor:'white',
-    height:'100%',
     padding: 16,
   },
   studentContainer: {
@@ -143,17 +149,16 @@ const styles = StyleSheet.create({
   button2: {
     backgroundColor: '#3b3b66',
     paddingVertical: 12,
-     alignSelf:'center',
+    alignSelf:'center',
     borderRadius: 10,
-    marginTop: 5,
+    marginTop: 20,
     width:'70%',
-},
-buttonText: {
+  },
+  buttonText: {
     textAlign: 'center',
     color: 'white',
-    // fontWeight: '500',
-    fontSize: 14,
-},
+    fontSize: 16,
+  },
 });
 
 export default StudentAttendance;
