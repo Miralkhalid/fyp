@@ -64,6 +64,7 @@ const IdCard = () => {
   return (
     <View style={styles.container}>
     <ImageBackground source={require('./idcard.png')} style={{height:'100%'}}>
+
     <View style={styles.detail}>
       <Text style={styles.cardText}>Name: {studentCard.name}</Text>
       <Text style={styles.cardText}>Email: {studentCard.email}</Text>
@@ -87,12 +88,15 @@ const styles = StyleSheet.create({
   cardText: {
     fontSize: 14,
     marginVertical: 5,
-    color:'#cdcddb',
+    color:'white',
   },
   detail:{
   marginHorizontal:'20%',
   marginVertical:'50%'
   },
+caption:{
+color:'white',
+},
   errorText: {
     color: 'red',
     textAlign: 'center',

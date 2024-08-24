@@ -3,18 +3,21 @@ import { View, Text, TextInput, Button, FlatList, StyleSheet } from 'react-nativ
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const AdminChatbox = ({ userId }) => {
+const AdminChatbox = ({route}) => {
+    const { id } = route.params;
     const [message, setMessage] = useState('');
     const [messages, setMessages] = useState([]);
     const [loading, setLoading] = useState(false);
 
+console.log('ab', id);
+
     const API_BASE_URL = 'http://192.168.0.106:8000/api'; // Replace with your backend API base URL
 
     useEffect(() => {
-        fetchMessages();
-    }, []);
+        fetchMessages(id);
+    }, [id]);
 
-const fetchMessages = async () => {
+const fetchMessages = async (id) => {
 try {
     const token = await AsyncStorage.getItem('jwtToken');
     const studentId = await AsyncStorage.getItem('studentId');
@@ -29,9 +32,9 @@ try {
         Authorization: `Bearer ${token}`,
       },
     };
-console.log('STDID:', studentId);
+console.log('STDID:', id);
 console.log('TOKEN:', token);
-    const response = await axios.get(`http://192.168.0.106:8000/api/get/messages/${studentId}`, config);
+    const response = await axios.get(`http://192.168.0.106:8000/api/get/messages/${id}`, config);
 //    console.log('Fetched messages:', response);
     if (response.data) {
     console.log('msg', response.data);
@@ -55,7 +58,7 @@ const sendMessage = async () => {
 
         // Send the message to the API
         const response = await axios.post(`${API_BASE_URL}/send/messages`, {
-                receiver_id: userId,
+                receiver_id: id,
                 message,
             },
             {
@@ -64,7 +67,7 @@ const sendMessage = async () => {
                 },
             }
         );
-
+console.log('receive', response);
         // Check for successful response
         if (response.data.status === 'success') {
             // Clear the input field
@@ -74,7 +77,7 @@ const sendMessage = async () => {
             const newMessage = response.data.data;
 
             // Optionally update local state with the new message
-            setMessages((prevMessages) => [newMessage, ...prevMessages]);
+            setMessages((prevMessages) => [...prevMessages, newMessage]);
         } else {
             console.error('Failed to send message:', response.data.message);
         }
@@ -85,20 +88,23 @@ const sendMessage = async () => {
 
 
     const renderMessageItem = ({ item }) => {
-        if (adminId === null) {
-            return null; // Or a loading indicator
-        }
+//        if (id === null) {
+//            return null; // Or a loading indicator
+//        }
 
-        const isSentByCurrentUser = item.sender_id === adminId;
+        const isSentByCurrentUser = item.sender_id === id;
 
         return (
             <View
                 style={[
                     styles.messageContainer,
-                    isSentByCurrentUser ? styles.sentMessage : styles.receivedMessage,
+                    !isSentByCurrentUser ? styles.sentMessage : styles.receivedMessage,
                 ]}
             >
-                <Text style={styles.messageText}>{item.message}</Text>
+                <Text style={[
+                                  styles.messageText,
+                                  !isSentByCurrentUser ? styles.sentText : styles.receivedText,
+                              ]}>{item.message}</Text>
             </View>
         );
     };
@@ -148,6 +154,7 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         paddingHorizontal: 10,
         marginRight: 10,
+        color:'black',
     },
     messageContainer: {
         padding: 10,
@@ -155,16 +162,22 @@ const styles = StyleSheet.create({
         borderRadius: 10,
     },
     sentMessage: {
-        backgroundColor: '#DCF8C6',
+        backgroundColor: '#297373',
         alignSelf: 'flex-end',
     },
     receivedMessage: {
-        backgroundColor: '#ECECEC',
+        backgroundColor: '#e6e6e6',
         alignSelf: 'flex-start',
     },
     messageText: {
         fontSize: 16,
     },
+    sentText: {
+            color: 'white', // Color for sent messages
+        },
+        receivedText: {
+            color: '#297373', // Color for received messages
+        },
 });
 
 export default AdminChatbox;

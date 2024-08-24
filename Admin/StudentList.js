@@ -54,7 +54,7 @@ const StudentList = () => {
 
     const renderStudentItem = ({ item }) => (
         <View style={styles.studentItem}>
-            <TouchableOpacity onPress={() => handlePress(item)}>
+            <TouchableOpacity onPress={() => navigation.navigate('AdminChatbox', { id: item.id})}>
                 <Text style={styles.studentName}>{item.name}</Text>
                 <Text style={styles.studentEmail}>{item.email}</Text>
             </TouchableOpacity>

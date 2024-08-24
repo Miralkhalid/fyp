@@ -117,6 +117,7 @@ const StudentAttendance = ({ route }) => {
               value={student.id.toString()}
               status={selectedStudents[student.id] ? 'checked' : 'unchecked'}
               onPress={() => handleSelectStudent(student.id)}
+              disabled = {student.attendance === "present" || student.attendance === "leave" || student.attendance === "absent" }
             />
           </View>
         ))
