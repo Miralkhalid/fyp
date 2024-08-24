@@ -1,9 +1,8 @@
-
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, StyleSheet, ActivityIndicator } from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { RadioButton } from 'react-native-paper'; // Ensure this library is installed
+import { RadioButton } from 'react-native-paper';
 
 const StudentAttendance = ({ route }) => {
   const { id } = route.params;
@@ -12,7 +11,6 @@ const StudentAttendance = ({ route }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Fetch the students list from the API
     const fetchStudents = async () => {
       try {
         const token = await AsyncStorage.getItem('jwtToken');
@@ -25,7 +23,6 @@ const StudentAttendance = ({ route }) => {
           }
         );
 
-        // Extract the student data
         if (response && response.data && response.data.data && response.data.data.Student) {
           console.log('Fetched Students:', response.data.data.Student);
           setStudents(response.data.data.Student);
@@ -43,81 +40,89 @@ const StudentAttendance = ({ route }) => {
     fetchStudents();
   }, [id]);
 
-  const handleSelectStudent = (studentId) => {
+  const handleSelectStudent = (studentId, status) => {
     setSelectedStudents(prevState => ({
       ...prevState,
-      [studentId]: !prevState[studentId], // Toggle the attendance status
+      [studentId]: status, // Set the status (present, absent, leave)
     }));
   };
 
- const handleSubmit = async () => {
-   try {
-     // Retrieve the JWT token from AsyncStorage
-     const token = await AsyncStorage.getItem('jwtToken');
+  const handleSubmit = async () => {
+    try {
+      const token = await AsyncStorage.getItem('jwtToken');
 
-     // Configuration for the Axios request
-     const config = {
-       headers: {
-         Authorization: `Bearer ${token}`,
-       },
-     };
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
 
-     // Log the token and selected students for debugging
-     console.log('JWT Token:', token);
-     console.log('Selected Students:', selectedStudents);
+      console.log('JWT Token:', token);
+      console.log('Selected Students:', selectedStudents);
 
-     // Prepare the data payload to send in the POST request
-     const data = {
-       course_id: id, // Ensure 'id' is defined and passed from the route params or context
-       students: Object.keys(selectedStudents).map(studentId => ({
-         id: parseInt(studentId, 10), // Ensure the ID is parsed as an integer
-         attendance: selectedStudents[studentId] ? 'present' : 'absent', // Adjust attendance logic if needed
-       })),
-     };
+      const data = {
+        course_id: id,
+        students: Object.keys(selectedStudents).map(studentId => ({
+          id: parseInt(studentId, 10),
+          attendance: selectedStudents[studentId], // Use the selected status directly
+        })),
+      };
 
-     // Log the data for debugging
-     console.log('Payload Data:', data);
+      console.log('Payload Data:', data);
 
-     // Send the POST request to mark attendance
-     const response = await axios.post(
-       'http://192.168.0.106:8000/api/staff/mark-student-attendance',
-       data,
+      const response = await axios.post(
+        'http://192.168.0.106:8000/api/staff/mark-student-attendance',
+        data,
         config
-     );
+      );
 
-     // If the response is successful, log and alert the user
-     if (response) {
-       console.log('Attendance Response:', response);
-     }
+      if (response) {
+        console.log('Attendance Response:', response);
+      }
 
-     alert('Attendance marked successfully!');
-   } catch (error) {
-     // Log the error and alert the user in case of failure
-     console.error('Error marking attendance:', error.message);
-     alert('Error marking attendance');
-   }
- };
+      alert('Attendance marked successfully!');
+    } catch (error) {
+      console.error('Error marking attendance:', error.message);
+      alert('Error marking attendance');
+    }
+  };
 
- // Handle loading state (this should be part of your component render logic)
- if (loading) {
-   return <ActivityIndicator size="large" color="#0000ff" />;
- }
-
- // Log the selected students for debugging outside of the async function
- console.log('Selected Students:', selectedStudents);
-
+  if (loading) {
+    return <ActivityIndicator size="large" color="#0000ff" />;
+  }
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      <View style={styles.headerContainer}>
+        <Text style={styles.headerText}>Student Name</Text>
+        <Text style={styles.headerText}>Present</Text>
+        <Text style={styles.headerText}>Absent</Text>
+        <Text style={styles.headerText}>Leave</Text>
+      </View>
       {students.length > 0 ? (
         students.map(student => (
           <View key={student.id} style={styles.studentContainer}>
             <Text style={styles.studentName}>{student.name}</Text>
             <RadioButton
-              value={student.id.toString()}
-              status={selectedStudents[student.id] ? 'checked' : 'unchecked'}
-              onPress={() => handleSelectStudent(student.id)}
-              disabled = {student.attendance === "present" || student.attendance === "leave" || student.attendance === "absent" }
+            style={styles.radiobutton}
+              value="present"
+              status={selectedStudents[student.id] === 'present' ? 'checked' : 'unchecked'}
+              onPress={() => handleSelectStudent(student.id, 'present')}
+              disabled={student.attendance === "present" || student.attendance === "leave" || student.attendance === "absent"}
+            />
+            <RadioButton
+              value="absent"
+              style={styles.radiobutton}
+              status={selectedStudents[student.id] === 'absent' ? 'checked' : 'unchecked'}
+              onPress={() => handleSelectStudent(student.id, 'absent')}
+              disabled={student.attendance === "present" || student.attendance === "leave" || student.attendance === "absent"}
+            />
+            <RadioButton
+            style={styles.radiobutton}
+              value="leave"
+              status={selectedStudents[student.id] === 'leave' ? 'checked' : 'unchecked'}
+              onPress={() => handleSelectStudent(student.id, 'leave')}
+              disabled={student.attendance === "present" || student.attendance === "leave" || student.attendance === "absent"}
             />
           </View>
         ))
@@ -134,32 +139,74 @@ const StudentAttendance = ({ route }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor:'white',
-    padding: 16,
+    backgroundColor: '#e8f4f8', // Light blue background for a fresh look
+    paddingVertical: 20,
+    paddingHorizontal: 10,
   },
-  studentContainer: {
+  headerContainer: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 10,
+    marginBottom: 20,
+    paddingHorizontal: 10,
+    backgroundColor: '#ffffff',
+    borderRadius: 10,
+    paddingVertical: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    elevation: 3,
   },
-  studentName: {
+  headerText: {
     flex: 1,
-    color:'#3b3b66',
+    textAlign: 'center',
+    fontWeight: 'bold',
+    color: '#4a90e2', // Matching the button color for consistency
     fontSize: 16,
   },
+  studentContainer: {
+    backgroundColor: '#ffffff',
+    padding: 15,
+    borderRadius: 15,
+    marginBottom: 15,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 4,
+  },
+  studentName: {
+    color: '#333333',
+    fontSize: 18,
+    fontWeight: '600',
+    marginBottom: 10,
+  },
+  radioButtonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginTop: 10,
+  },
   button2: {
-    backgroundColor: '#3b3b66',
-    paddingVertical: 12,
-    alignSelf:'center',
-    borderRadius: 10,
-    marginTop: 20,
-    width:'70%',
+    backgroundColor: '#4a90e2',
+    paddingVertical: 15,
+    alignSelf: 'center',
+    borderRadius: 30,
+    marginTop: 30,
+    width: '80%',
+    shadowColor: '#4a90e2',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.3,
+    shadowRadius: 15,
+    elevation: 10,
   },
   buttonText: {
     textAlign: 'center',
     color: 'white',
-    fontSize: 16,
+    fontSize: 18,
+    fontWeight: '700',
   },
 });
+
 
 export default StudentAttendance;
