@@ -4,10 +4,11 @@ import DocumentPicker from 'react-native-document-picker';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const UploadGrades = ({ onFileUploaded }) => {
+const UploadGrades = ({route, onFileUploaded }) => {
+const { id } = route.params;
   const [file, setFile] = useState([]);
   const [uploading, setUploading] = useState(false);
-
+console.log('id', id);
   const handleFilePickAndUpload = async () => {
     try {
       // Pick a PDF file
@@ -30,20 +31,21 @@ const UploadGrades = ({ onFileUploaded }) => {
         type: doc[0].type,
         name: doc[0].name,
       });
+       formData.append('student_id', id);
 
       console.log('FormData:', formData);
 
       // Get JWT token from AsyncStorage
       const token = await AsyncStorage.getItem('jwtToken');
       setUploading(true); // Set uploading state to true
-
+ const config = {
+             headers: {
+                 Authorization: `Bearer ${token}`,
+                 'Content-Type': 'multipart/form-data',
+             }
+         };
       // Upload file
-      const response = await axios.post('http://192.168.0.106:8000/api/upload/grades', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await axios.post('http://192.168.0.106:8000/api/upload/grades', formData, config);
 
       console.log('Server response:', response);
       console.log('Server response data:', response.data);

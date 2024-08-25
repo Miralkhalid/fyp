@@ -3,7 +3,6 @@ import { View, Text, FlatList, StyleSheet, TouchableOpacity, Alert } from 'react
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Searchbar } from 'react-native-paper';
-import { ip } from './global';
 
 const Registration = () => {
     const [course, setCourse] = useState([]);

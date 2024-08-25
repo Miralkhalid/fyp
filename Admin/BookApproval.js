@@ -34,34 +34,40 @@ const BookApproval = () => {
         }
     };
 
-    const handlePress = async (book_id, student_id) => {
-        const token = await AsyncStorage.getItem('jwtToken');
-        const config = {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        };
 
-        const body = {
-            student_id: student_id
-        };
+const handlePress = async (book_id, student_id) => {
+    console.log('ab', book_id, student_id);
 
-        const url = `http://192.168.0.106:8000/api/book/request/${book_id}/update`;
-
-        try {
-            console.log(`Sending request to: ${url}`); // Log the URL to check correctness
-            const response = await axios.post(url, body, config);
-            if (response.data && response.data.status === 'success') {
-                Alert.alert('Approval Success', 'Book request has been successfully approved.');
-                handleRequest(); // Refetch the data
-            } else {
-                setError('Failed to approve request');
-            }
-        } catch (error) {
-            console.error('Error approving request:', error.response?.data || error.message);
-            setError('Failed to approve request');
-        }
+    const token = await AsyncStorage.getItem('jwtToken');
+    const config = {
+        headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'multipart/form-data', // Ensure the content type is set to form-data
+        },
     };
+
+    const formData = new FormData();
+    formData.append('status', 'approved');
+
+    const url = `http://192.168.0.106:8000/api/book/request/${book_id}/update`;
+
+    try {
+        console.log(`Sending request to: ${url}`); // Log the URL to check correctness
+        const response = await axios.post(url, formData, config);
+
+
+        // Handle success response
+        if (response.data && response.data.status === 'success') {
+         console.log('res', response.data.message);
+            Alert.alert('Approval Success', 'Book request has been successfully approved.');
+            handleRequest(); // Refetch the data
+        }
+    } catch (error) {
+        console.error('Error approving request:', error.response?.data);
+        Alert.alert('Error', `${error?.response?.data?.message || 'Failed to approve request'}`);
+    }
+};
+
 
     const renderItem = ({ item }) => (
         <View style={styles.item}>
@@ -70,11 +76,13 @@ const BookApproval = () => {
             <Text style={styles.style}><Text style={styles.label}>Published Year: </Text>{item.book.published_year || 'N/A'}</Text>
             <Text style={styles.style}><Text style={styles.label}>Student Name: </Text>{item.user.name || 'N/A'}</Text>
             <View style={styles.btncon}>
+            { console.log(item.status) }
                 <TouchableOpacity
-                    style={styles.updateButton}
+                    style={[styles.updateButton, item.status === 'approved' && styles.disabledButton]}
+                    disabled = {item.status === 'approved'}
                     onPress={() => handlePress(item.book_id, item.user_id)} // Pass book_id and user_id here
                 >
-                    <Text style={styles.deleteButtonText}>Approve</Text>
+                    <Text style={styles.deleteButtonText}>{item.status === 'pending'? 'Approve Book': 'Already Issued'}</Text>
                 </TouchableOpacity>
             </View>
         </View>
@@ -122,14 +130,19 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         color: 'white',
         fontWeight: 'bold',
+        width:'100%',
+        fontSize:12,
     },
     updateButton: {
         backgroundColor: '#8c8c9f',
-        width: '25%',
+        width: '30%',
         borderRadius: 5,
         marginEnd: 5,
         padding: 10,
     },
+      disabledButton: {
+          backgroundColor: 'black', // Set the background color for the disabled button
+      },
     btncon: {
         flex: 1,
         flexDirection: 'row',

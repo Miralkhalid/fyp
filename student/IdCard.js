@@ -4,7 +4,7 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const IdCard = ({ route }) => {
-  const { id } = route.params;
+//  const { id } = route.params;
   const [loading, setLoading] = useState(true);
   const [studentCard, setStudentCard] = useState(null);
   const [error, setError] = useState(null);
@@ -12,14 +12,14 @@ const IdCard = ({ route }) => {
   useEffect(() => {
     const fetchCard = async () => {
       try {
-        const student_id = await AsyncStorage.getItem('student_id');
+        const studentId = await AsyncStorage.getItem('studentId');
         const token = await AsyncStorage.getItem('jwtToken');
 
         // Log the retrieved student ID and token
-        console.log(`Retrieved student ID: ${student_id}`);
+        console.log(`Retrieved student ID: ${studentId}`);
         console.log(`Retrieved JWT Token: ${token}`);
 
-        if (!student_id) {
+        if (!studentId) {
           Alert.alert('Error', 'Student ID not found in storage');
           setLoading(false);
           return;
@@ -31,8 +31,8 @@ const IdCard = ({ route }) => {
           },
         };
 
-        console.log(`Fetching card details for student ID: ${student_id}`);
-        const response = await axios.get(`http://192.168.0.106:8000/api/student/get-card-detail/${student_id}`, config);
+        console.log(`Fetching card details for student ID: ${studentId}`);
+        const response = await axios.get(`http://192.168.0.106:8000/api/student/get-card-detail/${studentId}`, config);
 
         if (response.status === 200 && response.data.data) {
           setStudentCard([response.data.data]); // Wrap the response data in an array
@@ -115,7 +115,6 @@ const styles = StyleSheet.create({
         alignSelf:'center',
         width: 150,
         height: 1,
-        marginBottom:'15%',
       },
   text:{
   color:'white',

@@ -11,7 +11,6 @@ const Header = () => {
   }
 
   const Boxes = ({navigation}) => {
-  const item = { id: 10 };
     return (
       
       <View style={styles.Boxcontainer}>
@@ -26,7 +25,7 @@ const Header = () => {
 
         <View style={styles.box}>
           <View style={styles.inner}>
-          <TouchableOpacity onPress={() => navigation.navigate('Attendance')} >
+          <TouchableOpacity onPress={() => navigation.navigate('Attendance')}>
                 <Text style={styles.button}>Attendance</Text>
             </TouchableOpacity>
           </View>  
@@ -34,7 +33,7 @@ const Header = () => {
 
         <View style={styles.box}>
           <View style={styles.inner}>
-          <TouchableOpacity onPress={() => navigation.navigate('IdCard',{ id: item.id })}>
+          <TouchableOpacity onPress={() => navigation.navigate('IdCard')}>
                 <Text style={styles.button}>Student IdCard</Text>
             </TouchableOpacity>
           </View>  
@@ -72,10 +71,8 @@ const Header = () => {
 const Dashboard = ({navigation}) => {
   return (
     <SafeAreaView>
- 
-        <Header />
-        <Boxes  navigation={navigation}/>
-        
+     <Header />
+     <Boxes  navigation={navigation}/>
     </SafeAreaView>
   )
 }

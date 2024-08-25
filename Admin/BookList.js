@@ -38,10 +38,10 @@ const BookList = () => {
         }
     };
 
-    const handleDelete = async () => {
+    const handleDelete = async (bookId) => {
         try {
           const token = await AsyncStorage.getItem('jwtToken');
-          const response = await axios.delete(`http://192.168.0.106:8000/api/book/delete`, {
+          const response = await axios.delete(`http://192.168.0.106:8000/api/book/delete/${bookId}`, {
 //           const response = await axios.delete(`${API_URL}/api/book/delete`, {
             headers: {
               Authorization: `Bearer ${token}`,
