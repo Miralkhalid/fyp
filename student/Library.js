@@ -54,16 +54,19 @@ const Library = ({navigation}) => {
 
     const renderItem = ({ item }) => (
         <View style={styles.studentItem}>
+            <Text style={styles.style}><Text style={{fontWeight: '500', color: 'white'}}>Book Id: </Text>{item.id}</Text>
             <Text style={styles.style}><Text style={{fontWeight: '500', color: 'white'}}>Book Name: </Text>{item.book_name}</Text>
             <Text style={styles.style}><Text style={{fontWeight: '500', color: 'white'}}>Author Name: </Text>{item.author_name}</Text>
             <Text style={styles.style}><Text style={{fontWeight: '500', color: 'white'}}>Published Year: </Text>{item.published_year}</Text>
             <View style={styles.btncon}>
-                <TouchableOpacity
-                    style={styles.updateButton}
-                    onPress={() => navigation.navigate('Issue')} // Pass the item id here
-                >
+                <TouchableOpacity style={styles.updateButton}
+                    onPress={() => navigation.navigate('Issue')} >
                     <Text style={styles.deleteButtonText}>Issue</Text>
                 </TouchableOpacity>
+                <TouchableOpacity style={styles.updateButton}
+                onPress={() => navigation.navigate('')} >
+                 <Text style={styles.deleteButtonText}>Issue</Text>
+                 </TouchableOpacity>
             </View>
         </View>
     );

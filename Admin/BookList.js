@@ -80,9 +80,7 @@ const BookList = () => {
         <TouchableOpacity style={styles.deleteButton} onPress={() => handleDelete(item.id)}>
           <Text style={styles.deleteButtonText}>Delete</Text>
         </TouchableOpacity>
-         <TouchableOpacity style={styles.deleteButton} onPress={() => handleDelete(item.id)}>
-          <Text style={styles.deleteButtonText}>Approval</Text>
-         </TouchableOpacity>
+
         </View>
         </View>
     );

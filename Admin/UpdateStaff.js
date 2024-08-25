@@ -15,7 +15,7 @@ const UpdateStaff = () => {
   const handleStaff = async () => {
     try {
       const token = await AsyncStorage.getItem('jwtToken');
-      const response = await axios.get('http://192.168.166.191:8000/api/admin/staff/list', {
+      const response = await axios.get('http://192.168.0.106:8000/api/admin/staff/list', {
 //       const response = await axios.get(`${ip}/api/admin/staff/list', {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -60,7 +60,7 @@ const UpdateStaff = () => {
   const handleDelete = async (id) => {
     try {
       const token = await AsyncStorage.getItem('jwtToken');
-      const response = await axios.delete(`http://192.168.166.191:8000/api/admin/staff/delete/${id}`, {
+      const response = await axios.delete(`http://192.168.0.106:8000/api/admin/staff/delete/${id}`, {
 //     const response = await axios.get.delete(`${ip}/api/admin/staff/delete/${id}` {
        headers: {
          Authorization: `Bearer ${token}`

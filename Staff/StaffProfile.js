@@ -21,9 +21,9 @@ const StaffProfile = ({ navigation }) => {
                     Authorization: `Bearer ${token}`
                 }
             };
-            const response = await axios.get(`http://192.168.166.191:8000/api/profile/edit/${staffId}`, config);
+            const response = await axios.get(`http://192.168.0.106:8000/api/profile/edit/${staffId}`, config);
             const { data } = response.data;
-            const { name, email } = data; 
+            const { name, email } = data.user;
             setName(name);
             setEmail(email);
         } catch (error) {
@@ -45,7 +45,7 @@ const StaffProfile = ({ navigation }) => {
                     Authorization: `Bearer ${token}`
                 }
             };
-            const response = await axios.post(`http://192.168.166.191:8000/api/profile/update/${staffId}`, {
+            const response = await axios.post(`http://192.168.0.106:8000/api/profile/update/${staffId}`, {
                 name: name,
                 email: email,
             }, config);
@@ -60,6 +60,10 @@ const StaffProfile = ({ navigation }) => {
             console.error('Error saving profile:', error);
             Alert.alert('Error', 'An error occurred while updating your profile');
         }
+    };
+    const handleLogout = async () => {
+        // Clear JWT token or perform logout logic if needed
+        navigation.navigate('Admin');
     };
 
     return (
@@ -80,9 +84,23 @@ const StaffProfile = ({ navigation }) => {
                         editable={editing}
                     />
                 </View>
-                <TouchableOpacity onPress={handleSave} style={styles.saveButton}>
-                    <Text style={styles.buttonText}>Save</Text>
-                </TouchableOpacity>
+              {editing ? (
+                                <View style={styles.buttonContainer}>
+                                    <TouchableOpacity style={styles.button} onPress={handleSave}>
+                                        <Text style={styles.buttonText}>Save</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity style={styles.button} onPress={() => setEditing(false)}>
+                                        <Text style={styles.buttonText}>Cancel</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            ) : (
+                                <TouchableOpacity style={styles.button} onPress={() => setEditing(true)}>
+                                    <Text style={styles.buttonText}>Edit</Text>
+                                </TouchableOpacity>
+                            )}
+                            <TouchableOpacity style={styles.button} onPress={handleLogout}>
+                                <Text style={styles.buttonText}>Logout</Text>
+                            </TouchableOpacity>
             </ImageBackground>
         </View>
     );
@@ -112,22 +130,22 @@ const styles = StyleSheet.create({
         fontWeight: '700',
         color: '#8c8c9f',
         justifyContent: 'center',
-        marginTop: 10,
+        marginTop: 5,
     },
-    saveButton: {
-        backgroundColor: '#8c8c9f',
-        paddingVertical: 12,
-        paddingHorizontal: 35,
-        borderRadius: 5,
-        marginHorizontal: '25%',
-        marginTop: 20,
-    },
-    buttonText: {
-        color: '#cdcddb',
-        fontSize: 16,
-        textAlign: 'center',
-        fontWeight: '700',
-    },
+     button: {
+           backgroundColor: "#3b3b66",
+           padding: 15,
+           borderRadius: 5,
+           alignItems: "center",
+           marginHorizontal: '25%',
+           marginTop: 10,
+       },
+       buttonText: {
+           color: 'white',
+           fontSize: 16,
+           textAlign: 'center',
+           fontWeight: '700',
+       },
 });
 
 export default StaffProfile;

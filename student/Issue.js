@@ -4,6 +4,7 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function Issue() {
+  const [book_id, setBookId] = useState('');
   const [from_date, setFromDate] = useState('');
   const [to_date, setToDate] = useState('');
 
@@ -18,12 +19,15 @@ export default function Issue() {
       };
       const response = await axios.post('http://192.168.0.106:8000/api/book/request',
         {
+          book_id,
           from_date,
           to_date
         },
         config // Include the config here
       );
-
+ if(response){
+      console.log(response);
+      }
       alert('Request sent successfully!');
     } catch (error) {
       console.error('Error:', error); // Log the error for debugging
@@ -35,6 +39,14 @@ export default function Issue() {
     <View style={styles.container}>
     <ScrollView>
      <View style={styles.form}>
+      <Text style={styles.label}>Book Id</Text>
+      <TextInput
+             style={styles.input}
+             value={book_id}
+             onChangeText={setBookId}
+             placeholder="Book Id"
+             placeholderTextColor="#ccc"
+           />
       <Text style={styles.label}>Start Date</Text>
       <TextInput
         style={styles.input}
@@ -75,7 +87,7 @@ form:{
 //    alignItems:'center',
     alignSelf:'center',
     borderRadius:10,
-    width:'70%',
+    width:'80%',
     marginVertical:'45%',
     height:'60%',
 },

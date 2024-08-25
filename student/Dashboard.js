@@ -11,6 +11,7 @@ const Header = () => {
   }
 
   const Boxes = ({navigation}) => {
+  const item = { id: 10 };
     return (
       
       <View style={styles.Boxcontainer}>
@@ -33,7 +34,7 @@ const Header = () => {
 
         <View style={styles.box}>
           <View style={styles.inner}>
-          <TouchableOpacity onPress={() => navigation.navigate('IdCard')}>
+          <TouchableOpacity onPress={() => navigation.navigate('IdCard',{ id: item.id })}>
                 <Text style={styles.button}>Student IdCard</Text>
             </TouchableOpacity>
           </View>  

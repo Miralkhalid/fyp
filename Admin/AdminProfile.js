@@ -7,7 +7,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const AdminProfile = ({ navigation }) => {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
-//    const [role, setRole] = useState('');
+    const [role, setRole] = useState('');
     const [id, setId] = useState(1); // Example user ID state
     const [editing, setEditing] = useState(false);
 
@@ -21,14 +21,14 @@ const AdminProfile = ({ navigation }) => {
                 }
             };
             console.log(adminId);
-            const response = await axios.get(`http://192.168.166.191:8000/api/profile/edit/${adminId}`, config);
+            const response = await axios.get(`http://192.168.0.106:8000/api/profile/edit/${adminId}`, config);
 //             const response = await axios.get(`${API_URL}/api/profile/edit/${id}`, config);
             const { data } = response.data; // Destructure the response
             const { name, email } = data.user; // Adjust based on actual response structure
             setName(name);
             setEmail(email);
 //            console.log('role', role);
-//            setRole(role); // Ensure to set the role as well
+            setRole(role); // Ensure to set the role as well
         } catch (error) {
             console.error('Error fetching profile details:', error);
             Alert.alert('Error', 'Failed to fetch profile details');
@@ -48,11 +48,11 @@ const AdminProfile = ({ navigation }) => {
                     Authorization: `Bearer ${token}`
                 }
             };
-            const response = await axios.post(`http://192.168.166.191:8000/api/profile/update/${adminId}`, {
+            const response = await axios.post(`http://192.168.0.106:8000/api/profile/update/${adminId}`, {
 //             const response = await axios.post(`${API_URL}/api/profile/update/${id}`, {
                 name: name,
                 email: email,
-//                role: role,
+                role: role,
             }, config);
 
             if (response.status === 200) {
@@ -90,7 +90,6 @@ const AdminProfile = ({ navigation }) => {
                         editable={editing}
                         placeholder="Email"
                     />
-//
                 </View>
                 {editing ? (
                     <View style={styles.buttonContainer}>

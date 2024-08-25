@@ -7,6 +7,7 @@ const API_URL = 'http://192.168.166.191:8000/api';
 // const API_URL = 'http://192.168.195.191:8000/api';
 
 const AddLibrary = ({navigation}) => {
+//  const [book_name, setBookName] = useState('');
   const [book_name, setBookName] = useState('');
   const [author_name, setAuthorName] = useState('');
   const [published_year, setPublishesYear] = useState('');
@@ -89,6 +90,10 @@ const AddLibrary = ({navigation}) => {
         <TouchableOpacity style={styles.UpdateBtn} onPress={() => navigation.navigate('BookList')} >
           <Text style={styles.buttonText}>Book List</Text>
         </TouchableOpacity>
+        <TouchableOpacity style={styles.deleteButton} onPress={() => navigation.navigate('BookApproval')}>
+           <Text style={styles.deleteButtonText}>Approval</Text>
+        </TouchableOpacity>
+
         </View>
       </View>
     </ScrollView>
@@ -161,8 +166,24 @@ const styles = StyleSheet.create({
     width:'80%',
     // marginHorizontal:'25%',
     marginTop:5,
-    marginBottom:'30%'
-  }
+    marginBottom:'2%'
+  },
+     deleteButton: {
+         backgroundColor: "#8c8c9f",
+             padding: 15,
+             borderRadius: 10,
+             alignItems: "center",
+             alignSelf:'center',
+             width:'80%',
+             // marginHorizontal:'25%',
+             marginTop:5,
+             marginBottom:'30%'
+        },
+        deleteButtonText: {
+          textAlign: 'center',
+          color: 'white',
+          fontWeight:'600',
+        },
 });
 
 export default AddLibrary;

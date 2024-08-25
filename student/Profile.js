@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, ImageBackground, Alert } from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { ip } from './global';
 
 const Profile = ({ navigation }) => {
     const [name, setName] = useState('');
@@ -10,7 +9,6 @@ const Profile = ({ navigation }) => {
     const [role, setRole] = useState('');
     const [id, setId] = useState(null); // Initialize as null
     const [editing, setEditing] = useState(false);
-
 
     const fetchProfileData = async () => {
         try {
@@ -23,7 +21,7 @@ const Profile = ({ navigation }) => {
                     Authorization: `Bearer ${token}`
                 }
             };
-             const response = await axios.get(`http://192.168.166.191:8000/api/profile/edit/${studentId}`, config);
+             const response = await axios.get(`http://192.168.0.106:8000/api/profile/edit/${studentId}`, config);
             const { data } = response.data; // Destructure the response
             const { name, email } = data.user; // Adjust based on actual response structure
             setName(name);
@@ -48,7 +46,7 @@ const Profile = ({ navigation }) => {
                     Authorization: `Bearer ${token}`
                 }
             };
-             const response = await axios.post(`http://192.168.166.191:8000/api/profile/update/${userId}`, {
+             const response = await axios.post(`http://192.168.0.106:8000/api/profile/update/${userId}`, {
                 name: name,
                 email: email,
                 role: role,

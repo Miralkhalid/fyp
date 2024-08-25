@@ -104,7 +104,6 @@ const StudentAttendance = ({ route }) => {
           <View key={student.id} style={styles.studentContainer}>
             <Text style={styles.studentName}>{student.name}</Text>
             <RadioButton
-            style={styles.radiobutton}
               value="present"
               status={selectedStudents[student.id] === 'present' ? 'checked' : 'unchecked'}
               onPress={() => handleSelectStudent(student.id, 'present')}
@@ -112,13 +111,11 @@ const StudentAttendance = ({ route }) => {
             />
             <RadioButton
               value="absent"
-              style={styles.radiobutton}
               status={selectedStudents[student.id] === 'absent' ? 'checked' : 'unchecked'}
               onPress={() => handleSelectStudent(student.id, 'absent')}
               disabled={student.attendance === "present" || student.attendance === "leave" || student.attendance === "absent"}
             />
             <RadioButton
-            style={styles.radiobutton}
               value="leave"
               status={selectedStudents[student.id] === 'leave' ? 'checked' : 'unchecked'}
               onPress={() => handleSelectStudent(student.id, 'leave')}
@@ -139,19 +136,18 @@ const StudentAttendance = ({ route }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#e8f4f8', // Light blue background for a fresh look
+    backgroundColor: 'white', // Light blue background for a fresh look
     paddingVertical: 20,
     paddingHorizontal: 10,
   },
   headerContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
     marginBottom: 20,
-    paddingHorizontal: 10,
+    paddingHorizontal: 5,
     backgroundColor: '#ffffff',
     borderRadius: 10,
-    paddingVertical: 10,
+    paddingVertical: 20,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
@@ -162,12 +158,15 @@ const styles = StyleSheet.create({
     flex: 1,
     textAlign: 'center',
     fontWeight: 'bold',
-    color: '#4a90e2', // Matching the button color for consistency
-    fontSize: 16,
+    color: '#3b3b66', // Matching the button color for consistency
+    fontSize: 12,
   },
   studentContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     backgroundColor: '#ffffff',
-    padding: 15,
+    padding: 10,
     borderRadius: 15,
     marginBottom: 15,
     shadowColor: '#000',
@@ -177,28 +176,18 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   studentName: {
-    color: '#333333',
-    fontSize: 18,
+//    flex: 2,
+    color: 'black',
+    fontSize: 14,
     fontWeight: '600',
-    marginBottom: 10,
-  },
-  radioButtonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginTop: 10,
   },
   button2: {
-    backgroundColor: '#4a90e2',
+    backgroundColor: '#3b3b66',
     paddingVertical: 15,
     alignSelf: 'center',
-    borderRadius: 30,
+    borderRadius: 15,
     marginTop: 30,
-    width: '80%',
-    shadowColor: '#4a90e2',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.3,
-    shadowRadius: 15,
-    elevation: 10,
+    width: '100%',
   },
   buttonText: {
     textAlign: 'center',

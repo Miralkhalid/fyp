@@ -91,7 +91,7 @@ const StudentRecord = ({ navigation }) => {
         <TouchableOpacity style={styles.deleteButton} onPress={() => handleDelete(item.id)}>
           <Text style={styles.deleteButtonText}>Delete</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.gradeButton} onPress={() => navigation.navigate('UploadGrades')}>
+        <TouchableOpacity style={styles.gradeButton} onPress={() => navigation.navigate('UploadGrades', item.id )}>
           <Text style={styles.deleteButtonText}>Grade</Text>
         </TouchableOpacity>
       </View>

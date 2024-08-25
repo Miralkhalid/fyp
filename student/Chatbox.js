@@ -158,11 +158,11 @@ const styles = StyleSheet.create({
         borderRadius: 10,
     },
     sentMessage: {
-        backgroundColor: '#297373',
+        backgroundColor: '#8c8c9f',
         alignSelf: 'flex-end',
     },
     receivedMessage: {
-        backgroundColor: '#e6e6e6',
+        backgroundColor: '#cdcddb',
         alignSelf: 'flex-start',
     },
     messageText: {
@@ -172,7 +172,7 @@ const styles = StyleSheet.create({
             color: 'white', // Color for sent messages
         },
         receivedText: {
-            color: '#297373', // Color for received messages
+            color: 'white', // Color for received messages
         },
 });
 
