@@ -67,7 +67,7 @@ const StaffProfile = ({ navigation }) => {
             formData.append('name', user.name);
             formData.append('email', user.email);
             formData.append('date_of_birth', user.dateOfBirth);
-            formData.append('status', user.status ? 1 : 0);
+            formData.append('status', user.status ? 1 : 1);
 
             const response = await axios.post(
                 `http://192.168.0.106:8000/api/profile/update/${staffId}`,

@@ -35,9 +35,10 @@ const StudentList = () => {
                    Authorization: `Bearer ${token}`,
                },
            },config);
+           console.log('response', response.data);
            if (response.data.status === 'success' && response.data.data) {
-
                setStudents(response.data.data);
+               console.log('students array', response.data.data);
            } else {
                console.error('Failed to fetch students:', response.data.message);
            }

@@ -43,7 +43,7 @@ const BookList = () => {
                         Authorization: `Bearer ${token}`,
                     },
                 };
-                const response = await axios.delete(`http://192.168.0.106:8000/api/delete/${bookId}`, config);
+                const response = await axios.delete(`http://192.168.0.106:8000/api/book/delete/${bookId}`, config);
 
                 if (response.status === 200) {
                     Alert.alert('Book deleted successfully');

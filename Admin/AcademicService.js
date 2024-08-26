@@ -16,7 +16,7 @@ const Header = () => {
         
         <View style={styles.box}>
           <View style={styles.inner}>
-          <TouchableOpacity onPress={() => navigation.navigate('OfferAttendance')} >
+          <TouchableOpacity onPress={() => navigation.navigate('StudentlistAttendance')} >
                 <Text style={styles.button}>Offering Attendance </Text>
             </TouchableOpacity>
           </View>  

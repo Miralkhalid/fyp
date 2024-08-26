@@ -6,7 +6,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 //import { ip } from './global';
 
 const Library = ({navigation}) => {
-    const [book, setBook] = useState([]);
+    const [books, setBooks] = useState([]);
     const [error, setError] = useState(null);
     const [searchQuery, setSearchQuery] = useState('');
     const [filteredBook, setFilteredBook] = useState([]);
@@ -19,18 +19,39 @@ const Library = ({navigation}) => {
         try {
             const token = await AsyncStorage.getItem('jwtToken');
             console.log('JWT Token:', token); // Check the token value here
+
+            if (!token) {
+                throw new Error('JWT Token not found');
+            }
+
             const config = {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
             };
-            // Sending GET request without parameters
-             const response = await axios.get('http://192.168.0.106:8000/api/book/get', config);
 
-            if (response.data && response.data.data && response.data.data.book) {
-                console.log(response.data.data.book);
-                setBook(response.data.data.book);
-                setFilteredBook(response.data.data.book); // Corrected to match your backend response
+            // Sending GET request for books
+            const response = await axios.get('http://192.168.0.106:8000/api/book/get', config);
+            // Sending GET request for book requests
+            const result = await axios.get('http://192.168.0.106:8000/api/book/my-requests', config);
+
+            // Extracting request list or assigning an empty array
+            const requests = result?.data?.data?.request_list ?? [];
+
+            if (response.data && response.data.data && Array.isArray(response.data.data.book)) {
+                const books = response.data.data.book.map(book => {
+                    // Find the request matching the current book's id
+                    const matchingRequest = requests.find(req => req.book_id === book.id);
+
+                    // If a matching request is found, add the status to the book object
+                    return matchingRequest ? { ...book, status: matchingRequest.status } : book;
+                });
+
+                console.log(books);
+                setBooks(books); // Ensure this is an array
+                setFilteredBook(books); // Update the filtered books if necessary
+            } else {
+                throw new Error('No books found in response or data is not an array');
             }
         } catch (error) {
             console.error('Error fetching books:', error);
@@ -40,7 +61,7 @@ const Library = ({navigation}) => {
 
     const filterBook = () => {
         const lowercasedFilter = searchQuery.toLowerCase();
-        const filteredBook = book.filter(item => {
+        const filteredBook = books.filter(item => {
             return Object.keys(item).some(key =>
                 String(item[key]).toLowerCase().includes(lowercasedFilter)
             );
@@ -50,7 +71,7 @@ const Library = ({navigation}) => {
 
     useEffect(() => {
         filterBook();
-    }, [searchQuery, book]);
+    }, [searchQuery, books]);
 
     const renderItem = ({ item }) => (
         <View style={styles.studentItem}>
@@ -65,7 +86,7 @@ const Library = ({navigation}) => {
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.updateButton}
                 onPress={() => navigation.navigate('')} >
-                 <Text style={styles.deleteButtonText}>Issue</Text>
+                 <Text style={styles.deleteButtonText}>{item.status}</Text>
                  </TouchableOpacity>
             </View>
         </View>

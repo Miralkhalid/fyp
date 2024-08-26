@@ -6,15 +6,19 @@ import axios from 'axios';
 
 const StudentPDFViewer = ({ fileName }) => {
   const [pdfUri, setPdfUri] = useState('');
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchPdfUri = async () => {
       try {
         const token = await AsyncStorage.getItem('jwtToken');
-//        const response = await axios.get('http://192.168.0.106:8000/api/upload/fetch-fees/grades', {
-         const response = await axios.get('http://192.168.0.106:8000/api/upload/fetch-fees/grades', {
+
+        if (!token) {
+          throw new Error('Token not found');
+        }
+
+        const response = await axios.get('http://192.168.0.106:8000/api/upload/fetch-fees/grades', {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -25,8 +29,8 @@ const StudentPDFViewer = ({ fileName }) => {
 
         console.log('API Response:', response.data);
 
-        if (response.data && response.data.data && response.data.data.data) {
-          setPdfUri(response.data.data.data);
+        if (response.data && response.data.data && response.data.data.fileUri) {
+          setPdfUri(response.data.data.fileUri); // Assuming the API returns `fileUri`
         } else {
           throw new Error('PDF URI not found in response');
         }
@@ -61,7 +65,7 @@ const StudentPDFViewer = ({ fileName }) => {
   return (
     <View style={styles.container}>
       <WebView
-        source={{ uri: pdfUri }}
+        source={{ uri: `uploads/fees/1720206474_fee details.pdf` }}
         style={styles.pdf}
         onLoad={() => console.log('PDF loaded successfully')}
         onError={(error) => {

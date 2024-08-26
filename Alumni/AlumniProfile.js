@@ -79,7 +79,7 @@ const handleSave = async () => {
         formData.append('name', user.name);
         formData.append('email', user.email);
         formData.append('student_id', user.studentId);
-        formData.append('status', user.status ? 1 : 0); // Convert to 'true' or 'false' as string
+        formData.append('status', user.status ? 1 : 1); // Convert to 'true' or 'false' as string
         formData.append('date_of_birth', user.dateOfBirth);
 console.log('form', formData);
         // Send the POST request with the FormData object
