@@ -12,7 +12,7 @@ const AdminProfile = ({ navigation }) => {
         dateOfBirth: ''
     });
     const [editing, setEditing] = useState(false);
-console.log('user', user);
+    console.log('user', user);
     const fetchProfileData = async () => {
         try {
             const token = await AsyncStorage.getItem('jwtToken');
@@ -25,12 +25,13 @@ console.log('user', user);
             };
             const response = await axios.get(`http://192.168.0.106:8000/api/profile/edit/${adminId}`, config);
             const fetchedUser = response.data.data.user;
-            setUser({
-                id: fetchedUser.id,
-                name: fetchedUser.name,
-                email: fetchedUser.email,
-                dateOfBirth: fetchedUser.dateOfBirth
-            });
+                       setUser({
+                           id: fetchedUser.id,
+                           name: fetchedUser.name,
+                           email: fetchedUser.email,
+                           status: fetchedUser.status,
+                           dateOfBirth: fetchedUser.date_of_birth, // Assuming the API returns 'date_of_birth'
+                   });
         } catch (error) {
             console.error('Error fetching profile details:', error);
             Alert.alert('Error', 'Failed to fetch profile details');
@@ -49,7 +50,6 @@ console.log('user', user);
         try {
             const token = await AsyncStorage.getItem('jwtToken');
             const adminId = await AsyncStorage.getItem('adminId');
-
             const config = {
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -57,6 +57,7 @@ console.log('user', user);
                 }
             };
 
+            // Ensure all fields are filled
             if (!user.name || !user.email || !user.dateOfBirth) {
                 Alert.alert('Error', 'All fields are required.');
                 return;
@@ -67,6 +68,7 @@ console.log('user', user);
             formData.append('email', user.email);
             formData.append('date_of_birth', user.dateOfBirth);
             formData.append('status', user.status ? 1 : 0);
+
             const response = await axios.post(
                 `http://192.168.0.106:8000/api/profile/update/${adminId}`,
                 formData,
@@ -80,7 +82,7 @@ console.log('user', user);
                 Alert.alert('Error', 'Failed to update profile');
             }
         } catch (error) {
-            console.error('Error saving profile:', error.response?.data);
+            console.error('Error saving profile:', error);
             Alert.alert('Error', 'An error occurred while updating your profile');
         }
     };
@@ -109,14 +111,14 @@ console.log('user', user);
                         editable={editing}
                         placeholder="Email"
                     />
-                      <TextInput
-                         style={styles.input}
-                         value={user.dateOfBirth}
-                         onChangeText={(value) => handleInputChange('dateOfBirth', value)}
-                         editable={editing}
-                         placeholder="Date of Birth"
-                         placeholderTextColor={'#cdcddb'}
-                     />
+                     <TextInput
+                       style={styles.input}
+                       value={user.dateOfBirth}
+                       onChangeText={(value) => handleInputChange('dateOfBirth', value)}
+                      editable={editing}
+                      placeholder="Date of Birth"
+                      placeholderTextColor={'#cdcddb'}
+                    />
                 </View>
                 {editing ? (
                     <View style={styles.buttonContainer}>

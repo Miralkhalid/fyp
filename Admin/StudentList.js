@@ -18,20 +18,25 @@ const StudentList = () => {
    const fetchStudents = async () => {
        try {
            const token = await AsyncStorage.getItem('jwtToken');
-           if (!token) {
+            const config = {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+           };
+              if (!token) {
                console.error('No token found. Please log in again.');
                return;
            }
 
            console.log('Token:', token);
 
-           const response = await axios.get(`${API_BASE_URL}/admin/chat/students`, {
+           const response = await axios.get(`${API_BASE_URL}/admin/chat/students`,{
                headers: {
                    Authorization: `Bearer ${token}`,
                },
-           });
-
+           },config);
            if (response.data.status === 'success' && response.data.data) {
+
                setStudents(response.data.data);
            } else {
                console.error('Failed to fetch students:', response.data.message);

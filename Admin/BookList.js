@@ -1,36 +1,33 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, FlatList, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import axios from 'axios';
 import { Searchbar } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-//const API_URL = 'http://192.168.0.106:8000/api';
+
 const BookList = () => {
-    const [book, setBook] = useState([]);
+    const [books, setBooks] = useState([]);
     const [error, setError] = useState(null);
     const [searchQuery, setSearchQuery] = useState('');
-    const [filteredBook, setFilteredBook] = useState([]);
+    const [filteredBooks, setFilteredBooks] = useState([]);
 
     useEffect(() => {
-        handleBook();
+        fetchBooks();
     }, []);
 
-    const handleBook = async () => {
+    const fetchBooks = async () => {
         try {
             const token = await AsyncStorage.getItem('jwtToken');
-            console.log('JWT Token:', token); // Check the token value here
             const config = {
                 headers: {
-                    Authorization: `Bearer ${token}`
-                }
+                    Authorization: `Bearer ${token}`,
+                },
             };
-            // Sending GET request without parameters
-            const response = await axios.get('http://192.168.0.106:8000/api/book/get', config);
-//             const response = await axios.get(`${API_URL}/api/book/get`, config);
 
-            if (response.data && response.data.data && response.data.data.book) {
-                console.log(response.data.data.book);
-                setBook(response.data.data.book);
-                setFilteredBook(response.data.data.book); // Corrected to match your backend response
+            const response = await axios.get('http://192.168.0.106:8000/api/book/get', config);
+
+            if (response.data?.data?.book) {
+                setBooks(response.data.data.book);
+                setFilteredBooks(response.data.data.book);
             }
         } catch (error) {
             console.error('Error fetching books:', error);
@@ -39,49 +36,55 @@ const BookList = () => {
     };
 
     const handleDelete = async (bookId) => {
-        try {
-          const token = await AsyncStorage.getItem('jwtToken');
-          const response = await axios.delete(`http://192.168.0.106:8000/api/book/delete/${bookId}`, {
-//           const response = await axios.delete(`${API_URL}/api/book/delete`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-          if (response.status === 200) {
-            handleStaff();
-            Alert.alert('Book deleted successfully');
-          }
-        } catch (error) {
-          console.error('Error deleting book:', error);
-          setError(error.message);
-        }
-      };
+            try {
+                const token = await AsyncStorage.getItem('jwtToken');
+                const config = {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                };
+                const response = await axios.delete(`http://192.168.0.106:8000/api/delete/${bookId}`, config);
 
-    const filterBook = () => {
+                if (response.status === 200) {
+                    Alert.alert('Book deleted successfully');
+                    fetchBooks(); // Refresh the list after deletion
+                }
+            } catch (error) {
+                console.error('Error deleting book:', error.response?.data || error.message);
+                setError(error.response?.data?.message || error.message);
+            }
+        };
+
+    const filterBooks = () => {
         const lowercasedFilter = searchQuery.toLowerCase();
-        const filteredBook = book.filter(item => {
-            return Object.keys(item).some(key =>
+        const filteredBooks = books.filter(item =>
+            Object.keys(item).some(key =>
                 String(item[key]).toLowerCase().includes(lowercasedFilter)
-            );
-        });
-        setFilteredBook(filteredBook);
+            )
+        );
+        setFilteredBooks(filteredBooks);
     };
 
     useEffect(() => {
-        filterBook();
-    }, [searchQuery, book]);
+        filterBooks();
+    }, [searchQuery, books]);
 
     const renderItem = ({ item }) => (
-        <View style={styles.studentItem}>
-            <Text style={styles.style}><Text style={{fontWeight: '500', color: 'white'}}>Book Name: </Text>{item.book_name}</Text>
-            <Text style={styles.style}><Text style={{fontWeight: '500', color: 'white'}}>Author Name: </Text>{item.author_name}</Text>
-            <Text style={styles.style}><Text style={{fontWeight: '500', color: 'white'}}>Published Year: </Text>{item.published_year}</Text>
-            <View style={styles.btncon}>
-        <TouchableOpacity style={styles.deleteButton} onPress={() => handleDelete(item.id)}>
-          <Text style={styles.deleteButtonText}>Delete</Text>
-        </TouchableOpacity>
-
-        </View>
+        <View style={styles.bookItem}>
+            <Text style={styles.text}>
+                <Text style={styles.label}>Book Name: </Text>{item.book_name}
+            </Text>
+            <Text style={styles.text}>
+                <Text style={styles.label}>Author Name: </Text>{item.author_name}
+            </Text>
+            <Text style={styles.text}>
+                <Text style={styles.label}>Published Year: </Text>{item.published_year}
+            </Text>
+            <View style={styles.buttonContainer}>
+                <TouchableOpacity style={styles.deleteButton} onPress={() => handleDelete(item.id)}>
+                    <Text style={styles.buttonText}>Delete</Text>
+                </TouchableOpacity>
+            </View>
         </View>
     );
 
@@ -91,13 +94,13 @@ const BookList = () => {
                 placeholder="Search"
                 onChangeText={setSearchQuery}
                 value={searchQuery}
-                style={{ backgroundColor: '#cdcddb' }}
+                style={styles.searchBar}
             />
             {error ? (
-                <Text style={styles.error}>Error: {error}</Text>
+                <Text style={styles.errorText}>Error: {error}</Text>
             ) : (
                 <FlatList
-                    data={filteredBook}
+                    data={filteredBooks}
                     renderItem={renderItem}
                     keyExtractor={(item) => item.id.toString()}
                 />
@@ -112,7 +115,7 @@ const styles = StyleSheet.create({
         padding: 10,
         backgroundColor: '#fff',
     },
-    studentItem: {
+    bookItem: {
         padding: 12,
         marginVertical: 8,
         backgroundColor: '#3b3b66',
@@ -120,39 +123,36 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: 'black',
     },
-    style: {
+    text: {
         fontSize: 14,
         color: 'white',
         marginBottom: 4,
         fontWeight: '300',
     },
-    btncon: {
-        flex: 1,
+    label: {
+        fontWeight: '500',
+        color: 'white',
+    },
+    buttonContainer: {
         flexDirection: 'row',
-      },
-      updateButton: {
+    },
+    deleteButton: {
         backgroundColor: '#8c8c9f',
-        width: '20%',
-        borderRadius: 5,
-        marginEnd: 5,
-        padding: 5,
-      },
-      deleteButton: {
-        backgroundColor: '#8c8c9f',
-        width: '20%',
         borderRadius: 5,
         padding: 5,
-        marginEnd:5,
-      },
-      deleteButtonText: {
+    },
+    buttonText: {
         textAlign: 'center',
         color: 'white',
-        fontWeight:'600',
-      },
-    error: {
+        fontWeight: '600',
+    },
+    errorText: {
         fontSize: 18,
         color: 'red',
         textAlign: 'center',
+    },
+    searchBar: {
+        backgroundColor: '#cdcddb',
     },
 });
 

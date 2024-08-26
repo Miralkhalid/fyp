@@ -21,7 +21,7 @@ const UploadJob = ({navigation}) => {
                 contact_Email,
             }
            );
-                const response = await axios.post('http://192.168.166.191:8000/api/job/store', {
+                const response = await axios.post('http://192.168.0.106:8000/api/job/store', {
 //                 const response = await axios.post(`${ip}/api/job/store`, {
                     title: title,
                     company: company,

@@ -4,7 +4,7 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const BookApproval = () => {
-    const [book_data, setBookData] = useState([]);
+    const [bookData, setBookData] = useState([]);
     const [error, setError] = useState(null);
 
     useEffect(() => {
@@ -12,17 +12,16 @@ const BookApproval = () => {
     }, []);
 
     const handleRequest = async () => {
-        const token = await AsyncStorage.getItem('jwtToken');
-        const config = {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        };
-
         try {
+            const token = await AsyncStorage.getItem('jwtToken');
+            const config = {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            };
+
             const response = await axios.get('http://192.168.0.106:8000/api/book/requests', config);
 
-            // Check if the response contains data and book_request array
             if (response.data && response.data.data && response.data.data.book_request) {
                 setBookData(response.data.data.book_request);
             } else {
@@ -34,55 +33,54 @@ const BookApproval = () => {
         }
     };
 
+   const handlePress = async (bookId, studentId) => {
+       const token = await AsyncStorage.getItem('jwtToken');
+       const config = {
+           headers: {
+               Authorization: `Bearer ${token}`,
+               'Content-Type': 'multipart/form-data',
+           },
+       };
 
-const handlePress = async (book_id, student_id) => {
-    console.log('ab', book_id, student_id);
+       const formData = new FormData();
+       formData.append('status', 'approved');
 
-    const token = await AsyncStorage.getItem('jwtToken');
-    const config = {
-        headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'multipart/form-data', // Ensure the content type is set to form-data
-        },
-    };
+       const url = `http://192.168.0.106:8000/api/book/request/${bookId}/update`;
 
-    const formData = new FormData();
-    formData.append('status', 'approved');
+       try {
+           const response = await axios.post(url, formData, config);
 
-    const url = `http://192.168.0.106:8000/api/book/request/${book_id}/update`;
+           if (response.data && response.data.status === 'success') {
+               Alert.alert('Approval Success', 'Book request has been successfully approved.');
+               handleRequest(); // Refetch the data
+           }
+       } catch (error) {
+           const errorMessage = error.response?.data?.message || 'Failed to approve request';
+           console.error('Error approving request:', error.response?.data);
 
-    try {
-        console.log(`Sending request to: ${url}`); // Log the URL to check correctness
-        const response = await axios.post(url, formData, config);
-
-
-        // Handle success response
-        if (response.data && response.data.status === 'success') {
-         console.log('res', response.data.message);
-            Alert.alert('Approval Success', 'Book request has been successfully approved.');
-            handleRequest(); // Refetch the data
-        }
-    } catch (error) {
-        console.error('Error approving request:', error.response?.data);
-        Alert.alert('Error', `${error?.response?.data?.message || 'Failed to approve request'}`);
-    }
-};
+           // Handle specific error scenario for overlapping bookings
+           if (errorMessage.includes('Book is already issued to another student')) {
+               Alert.alert('Approval Failed', 'The book is already issued to another student during the requested date range.');
+           } else {
+               Alert.alert('Error', errorMessage);
+           }
+       }
+   };
 
 
     const renderItem = ({ item }) => (
         <View style={styles.item}>
-            <Text style={styles.style}><Text style={styles.label}>Book Name: </Text>{item.book.book_name || 'N/A'}</Text>
-            <Text style={styles.style}><Text style={styles.label}>Author Name: </Text>{item.book.author_name || 'N/A'}</Text>
-            <Text style={styles.style}><Text style={styles.label}>Published Year: </Text>{item.book.published_year || 'N/A'}</Text>
-            <Text style={styles.style}><Text style={styles.label}>Student Name: </Text>{item.user.name || 'N/A'}</Text>
+            <Text style={styles.style}><Text style={styles.label}>Book Name: </Text>{item.book?.book_name || 'N/A'}</Text>
+            <Text style={styles.style}><Text style={styles.label}>From Date: </Text>{item.from_date || 'N/A'}</Text>
+            <Text style={styles.style}><Text style={styles.label}>To Date: </Text>{item.to_date || 'N/A'}</Text>
+            <Text style={styles.style}><Text style={styles.label}>Student Name: </Text>{item.user?.name || 'N/A'}</Text>
             <View style={styles.btncon}>
-            { console.log(item.status) }
                 <TouchableOpacity
                     style={[styles.updateButton, item.status === 'approved' && styles.disabledButton]}
-                    disabled = {item.status === 'approved'}
-                    onPress={() => handlePress(item.book_id, item.user_id)} // Pass book_id and user_id here
+                    disabled={item.status === 'approved'}
+                    onPress={() => handlePress(item.book_id, item.user_id)}
                 >
-                    <Text style={styles.deleteButtonText}>{item.status === 'pending'? 'Approve Book': 'Already Issued'}</Text>
+                    <Text style={styles.deleteButtonText}>{item.status === 'pending' ? 'Approve Book' : 'Already Issued'}</Text>
                 </TouchableOpacity>
             </View>
         </View>
@@ -94,7 +92,7 @@ const handlePress = async (book_id, student_id) => {
                 <Text style={styles.error}>Error: {error}</Text>
             ) : (
                 <FlatList
-                    data={book_data}
+                    data={bookData}
                     renderItem={renderItem}
                     keyExtractor={(item) => item.id.toString()}
                 />
@@ -114,7 +112,6 @@ const styles = StyleSheet.create({
         marginVertical: 8,
         backgroundColor: '#3b3b66',
         borderRadius: 5,
-        color: 'white',
         borderWidth: 1,
         borderColor: 'black',
     },
@@ -130,8 +127,8 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         color: 'white',
         fontWeight: 'bold',
-        width:'100%',
-        fontSize:12,
+        width: '100%',
+        fontSize: 11,
     },
     updateButton: {
         backgroundColor: '#8c8c9f',
@@ -140,9 +137,9 @@ const styles = StyleSheet.create({
         marginEnd: 5,
         padding: 10,
     },
-      disabledButton: {
-          backgroundColor: 'black', // Set the background color for the disabled button
-      },
+    disabledButton: {
+        backgroundColor: 'black',
+    },
     btncon: {
         flex: 1,
         flexDirection: 'row',
