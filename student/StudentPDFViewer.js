@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, ActivityIndicator, Alert, Text } from 'react-native';
 import { WebView } from 'react-native-webview';
+//import Pdf from 'react-native-pdf';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 
@@ -18,19 +19,19 @@ const StudentPDFViewer = ({ fileName }) => {
           throw new Error('Token not found');
         }
 
-        const response = await axios.get('http://192.168.0.106:8000/api/upload/fetch-fees/grades', {
+        const response = await axios.get('http://192.168.0.106:8000/api/upload/fetch-fees/fees', {
           headers: {
             Authorization: `Bearer ${token}`,
-          },
-          params: {
-            fileName: fileName, // Pass fileName as query parameter
-          },
+          }
         });
 
         console.log('API Response:', response.data);
+// console.log('resp', typeof JSON.parse(response.data.slice(4)));
 
-        if (response.data && response.data.data && response.data.data.fileUri) {
-          setPdfUri(response.data.data.fileUri); // Assuming the API returns `fileUri`
+        if (response.data && response.data) {
+//        const url = JSON.parse(response.data.slice(4)).url;
+//        console.log('url', url);
+          setPdfUri(response.data.url); // Assuming the API returns fileUri
         } else {
           throw new Error('PDF URI not found in response');
         }
@@ -65,9 +66,9 @@ const StudentPDFViewer = ({ fileName }) => {
   return (
     <View style={styles.container}>
       <WebView
-        source={{ uri: `uploads/fees/1720206474_fee details.pdf` }}
+        source={{ uri: pdfUri }}
         style={styles.pdf}
-        onLoad={() => console.log('PDF loaded successfully')}
+        onLoad={() => Alert.alert('PDF is  downloading')}
         onError={(error) => {
           console.error('Error loading PDF:', error.nativeEvent.description || error.message);
           Alert.alert('Error', 'Failed to load PDF');

@@ -19,11 +19,17 @@ const OfferAttendance = ({ route }) => {
         },
       };
       console.log('cId', courseId);
-      const response = await axios.get(`http://192.168.0.106:8000/api/staff/getCourseStudentAttendance/${courseId}`, config);
+      console.log('res', new Date().toISOString().slice(0, 10));
+      console.log('res', new Date().toLocaleDateString('en-GB').slice(0, 10).split('/').join('-'));
+      const response = await axios.get(`http://192.168.0.106:8000/api/admin/getCourseStudentByAdmin/${courseId}?date=${new Date().toLocaleDateString('en-GB').slice(0, 10).split('/').join('-')}`, config);
+      response.data.data.Student.map(
+      student => {
+      handleSelectStudent(student.id, student.attendance)
+      })
       console.log('res', response.data);
-      setStudents(response.data.students);
+      setStudents(response.data.data.Student);
     } catch (error) {
-      console.error(error);
+      console.error(error.message);
     }
   };
 
@@ -31,21 +37,27 @@ const OfferAttendance = ({ route }) => {
     fetchStudent();
   }, []);
 
-  const markAttendance = () => {
-    if (!selectedStudent) {
-      Alert.alert('Please select a student');
-      return;
-    }
-
-    axios.post('http://your-backend-url/api/mark-attendance', {
-      student_id: selectedStudent.id,
-      date: new Date().toISOString().split('T')[0], // Current date
-    })
+  const markAttendance =  async () => {
+ const token = await AsyncStorage.getItem('jwtToken');
+       const config = {
+         headers: {
+           Authorization: `Bearer ${token}`,
+         },
+        };
+        console.log('students', selectedStudents);
+      axios.post('http://192.168.0.106:8000/api/admin/updateStudentAttendance', {
+      date: new Date().toLocaleDateString('en-GB').slice(0, 10).split('/').join('-'),
+      course_id: courseId,
+      students: Object.entries(selectedStudents).map(([key, value]) => ({
+                  id: parseInt(key, 10),
+                  attendance: value
+                }))
+    },config)
       .then(response => {
-        Alert.alert('Success', `Attendance marked for ${selectedStudent.name}`);
+        Alert.alert('Success', `Attendance marked`);
       })
       .catch(error => {
-        console.error(error);
+        console.error(error.message);
         Alert.alert('Error', 'Failed to mark attendance');
       });
   };
@@ -65,7 +77,7 @@ const OfferAttendance = ({ route }) => {
           Authorization: `Bearer ${token}`,
         },
       };
-   const response = await axios.post(``)
+//   const response = await axios.post(``);
       console.log('JWT Token:', token);
       console.log('Selected Students:', selectedStudents);
 
@@ -79,12 +91,12 @@ const OfferAttendance = ({ route }) => {
 
       console.log('Payload Data:', data);
 
-      const response = await axios.post(
-        'http://192.168.0.106:8000/api/staff/mark-student-attendance',
-        data,
-        config
-      );
-
+//      const response = await axios.post(
+////        'http://192.168.0.106:8000/api/staff/mark-student-attendance',
+//        data,
+//        config
+//      );
+const response = null;
       if (response) {
         console.log('Attendance Response:', response);
       }
@@ -104,7 +116,7 @@ const OfferAttendance = ({ route }) => {
         <Text style={styles.headerText}>Absent</Text>
         <Text style={styles.headerText}>Leave</Text>
       </View>
-      {students.length > 0 ? (
+      {students?.length > 0 ? (
         students.map(student => (
           <View key={student.id} style={styles.studentContainer}>
             <Text style={styles.studentName}>{student.name}</Text>
@@ -112,26 +124,26 @@ const OfferAttendance = ({ route }) => {
               value="present"
               status={selectedStudents[student.id] === 'present' ? 'checked' : 'unchecked'}
               onPress={() => handleSelectStudent(student.id, 'present')}
-              disabled={student.attendance === "present" || student.attendance === "leave" || student.attendance === "absent"}
+//              disabled={student.attendance === "present" || student.attendance === "leave" || student.attendance === "absent"}
             />
             <RadioButton
               value="absent"
               status={selectedStudents[student.id] === 'absent' ? 'checked' : 'unchecked'}
               onPress={() => handleSelectStudent(student.id, 'absent')}
-              disabled={student.attendance === "present" || student.attendance === "leave" || student.attendance === "absent"}
+//              disabled={student.attendance === "present" || student.attendance === "leave" || student.attendance === "absent"}
             />
             <RadioButton
               value="leave"
               status={selectedStudents[student.id] === 'leave' ? 'checked' : 'unchecked'}
               onPress={() => handleSelectStudent(student.id, 'leave')}
-              disabled={student.attendance === "present" || student.attendance === "leave" || student.attendance === "absent"}
+//              disabled={student.attendance === "present" || student.attendance === "leave" || student.attendance === "absent"}
             />
           </View>
         ))
       ) : (
         <Text>No students available</Text>
       )}
-      <TouchableOpacity style={styles.button2} onPress={handleSubmit}>
+      <TouchableOpacity style={styles.button2} onPress={markAttendance}>
         <Text style={styles.buttonText}>Submit Attendance</Text>
       </TouchableOpacity>
     </ScrollView>

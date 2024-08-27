@@ -60,7 +60,13 @@ const Attendance = () => {
 
        if (response.data && response.data.data) {
        console.log(attendances);
-         setAttendances((prevArr) => [...prevArr, response.data.data]);
+         setAttendances((prevArr) => {
+         const index = prevArr.findIndex(el=>el.id === response.data.data.id);
+         if(index == -1){
+         return [...prevArr, response.data.data]};
+
+         return prevArr;
+         })
        } else {
          console.log('Error While Fetching')
        }
@@ -77,6 +83,7 @@ const Attendance = () => {
         <View style={styles.attendanceItem}>
             <Text style={styles.text}><Text style={{ fontWeight: '500' }}>Student ID:</Text> {item?.student_id}</Text>
             <Text style={styles.text}><Text style={{ fontWeight: '500' }}>Course Name:</Text> {item?.course?.name}</Text>
+            <Text style={styles.text}><Text style={{ fontWeight: '500' }}>Date:</Text> {item?.date}</Text>
             <Text style={styles.text}><Text style={{ fontWeight: '500' }}>Attendance Status:</Text> {item?.attendance}</Text>
         </View>
     );
